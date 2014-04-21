@@ -6,6 +6,7 @@ import sim.field.grid.SparseGrid2D;
 import sim.util.Bag;
 import sim.util.Int2D;
 import sim.util.IntBag;
+import java.io.*;
 /**
  * This class represents the prey implementation of animal.
  * @author rachelfraczkowski
@@ -57,8 +58,21 @@ public class Prey extends Animal implements Steppable{
 		actualRepRate = defaultRepRate;
 		actualDeathRate = defaultDeathRate;
 		reproductionAge = repAge;
+		*/
 		ID = "R" + num;
-		eatingChance = 1;*/
+		dir.mkdirs();
+		
+		try
+		{
+			outputFile = new File(dir, ID + ".csv");
+			
+			writer = new FileWriter(outputFile);
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		//eatingChance = 1;*/
 	}
 	
 	/*
@@ -104,7 +118,7 @@ public class Prey extends Animal implements Steppable{
 	public void step(SimState state) {
 	 super.step(state);
 	 
-	 //System.out.println();
+	 //write();
 	 //Chance of Disease recovery
 	/*if(this.isDiseased && ((state.schedule.getTime() - diseaseTimestep) > lastMealLow)){
 		 	double d = state.random.nextInt(diseaseRandomNum);
@@ -139,17 +153,17 @@ public class Prey extends Animal implements Steppable{
 		
 		grid.getMooreNeighbors(cord.x, cord.y, 1, Grid2D.TOROIDAL, result, xPos, yPos);
 		
-		System.out.println("Prey Position: " + cord.x + "," + cord.y + ": ");
+		write("Prey Position: " + cord.x + "," + cord.y + ": ");
 		boolean first = true;
 		for(int i = 0; i < result.numObjs; i++)
 		{
 			Object temp = result.get(i);
-			//System.out.println("Result: " + temp);
+			//write("Result: " + temp);
 			
 			if(temp instanceof Predator && first == true){
 				
 				Int2D pred = grid.getObjectLocation(temp);
-				System.out.println("Located: " + pred.x + " " + pred.y);
+				write("Located: " + pred.x + " " + pred.y);
 				int deltaX = pred.x - cord.x;
 				int deltaY = pred.y - cord.y;
 				
@@ -202,7 +216,7 @@ public class Prey extends Animal implements Steppable{
 		*/
 		//Eating Food on the same location
 		assert(grid.getObjectsAtLocationOfObject(this) !=null);
-			//System.out.println("Num of objects at location: " + grid.getObjectsAtLocationOfObject(this));
+			//write("Num of objects at location: " + grid.getObjectsAtLocationOfObject(this));
 		
 			int gridNum = grid.getObjectsAtLocationOfObject(this).size();
 			
@@ -210,7 +224,7 @@ public class Prey extends Animal implements Steppable{
 			for(int i = 0; i < gridNum; i++){
 				Object obj = (grid.getObjectsAtLocationOfObject(this)).get(i);
 				if(obj.getClass().equals(Food.class) && obj != null){
-					//System.out.println("Prey would have eate");
+					//write("Prey would have eate");
 					this.eat(obj, state);
 					return true;
 				}// end of if
@@ -223,14 +237,14 @@ public class Prey extends Animal implements Steppable{
 	//Method for actually eating/ removing food from the grid.
 	public void eat(Object p, SimState state){
 		
-		//System.out.println(p);
+		//write(p);
 			Food food = (Food) p;
 			assert(food != null);
 			/*if(food.isDiseased()){
 				this.setDisease(true);
 				this.diseaseTimestep = state.schedule.getTime();
 			}*/
-			//System.out.println(this + " ate " + p);
+			//write(this + " ate " + p);
 			/*food.amount = food.amount - .9;
 			if(food.amount <0){
 				//amount = 0.0;
@@ -241,7 +255,7 @@ public class Prey extends Animal implements Steppable{
 			}*/
 			lastMeal = 0;
 			
-			//System.out.println("Food is removed");
+			//write("Food is removed");
 		
 	}
 	
@@ -284,7 +298,7 @@ public class Prey extends Animal implements Steppable{
 	 	//Last meal, more likely to die
 	 	if(lastMeal > lastMealLow)
 			actualDeathRate = actualDeathRate * (hungerDeathMod);
-		/*//System.out.println("deathRate: " + deathRate);
+		/*//write("deathRate: " + deathRate);
 	 	
 	 	if(lastMeal > lastMealHigh){
 			 stop.stop();
@@ -297,7 +311,7 @@ public class Prey extends Animal implements Steppable{
 		double d = state.random.nextInt(deathRandNum);
 		double death = d/deathRandNum;
 		
-		//System.out.println("d: " + d + " death: " + death);
+		//write("d: " + d + " death: " + death);
 		if(death < actualDeathRate && death != 0){
 			this.stop.stop();
 			numPrey--;
@@ -339,9 +353,9 @@ public class Prey extends Animal implements Steppable{
 			Int2D obLoc = grid.getObjectLocation(seen.get(s));
 	
 			locations.add(obLoc);
-			//System.out.println(" at location:" + obLoc);
+			//write(" at location:" + obLoc);
 			//if(j.equals(Prey.class))
-				//System.out.println("****" + seen.get(s));
+				//write("****" + seen.get(s));
 			
 		}
 			
@@ -349,7 +363,7 @@ public class Prey extends Animal implements Steppable{
 		
 		//Move every timestep
 		super.move(grid, state);
-		//System.out.println("Predator Moved");
+		//write("Predator Moved");
 	}// end of vision
 	
 	public void behaviorProb(Bag locs, Bag seen, SimState state){
@@ -381,11 +395,11 @@ public class Prey extends Animal implements Steppable{
 	
 	public void printStats()
 	{
-		System.out.print(", " + ID);
+		write(", " + ID);
 		map.printMaps();
-		System.out.print(", lastMeal: " + lastMeal);
-		System.out.print(", deathRate " + actualDeathRate);
-		System.out.print(", lastSocial: " + lastSocial);
-		System.out.print(", directionChange: " + directChangeTotal + "\n");
+		write(", lastMeal: " + lastMeal);
+		write(", deathRate " + actualDeathRate);
+		write(", lastSocial: " + lastSocial);
+		write(", directionChange: " + directChangeTotal + "\n");
 	}*/
 }

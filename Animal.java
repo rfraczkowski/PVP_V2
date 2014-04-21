@@ -1,6 +1,8 @@
 package sim.app.PVP_V2.src.pvp;
 
 
+import java.io.*;
+
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.engine.Stoppable;
@@ -12,6 +14,11 @@ public abstract class Animal implements Steppable {
 
 	protected SparseGrid2D grid;
 	protected boolean isDiseased = false;
+	protected FileWriter writer;
+	protected File outputFile;
+	protected File dir = new File("~/Documents/SeniorProject/corun_1");
+	protected String outputString = "";
+
 	protected int age = 0;
 	protected int oldAge; 
 	protected int direction;
@@ -28,13 +35,15 @@ public abstract class Animal implements Steppable {
 	public final static int WEST = 3;
 	public static int numPrey;
 	public static int numPredator;
+	
 	//protected Anger anger = new Anger(this);
 	//protected Sadness sad = new Sadness(this);
 	//protected Disgust dis = new Disgust(this);
 	//protected Fear fear = new Fear(this);
 	//protected Happiness happy = new Happiness(this);
 	//protected Surprise surprise = new Surprise(this);
-	//protected Mood mood = new Mood(anger, sad, dis, fear, happy);;
+	//protected Mood mood = new Mood(anger, sad, dis, fear, happy);
+	
 	protected int reproductionAge;
 	protected static double expectMapDecayRate;
 	protected int velocity = 1;
@@ -121,7 +130,7 @@ public abstract class Animal implements Steppable {
 		else if(lastNumPredator < numPredator)
 			reproductionCollectPredator += (numPredator - lastNumPredator);
 		
-		System.out.print(state.schedule.getTime() + ", " + numPrey + ", " + numPredator);*/
+		write(state.schedule.getTime() + ", " + numPrey + ", " + numPredator);*/
 		if(numPrey == 0 || numPredator == 0){
 			printFinalStats(state);
 			state.kill();
@@ -140,7 +149,7 @@ public abstract class Animal implements Steppable {
 	**/
 	protected void printFinalStats(SimState state){
 		
-		System.out.println("\nTimeStep:" + (int)state.schedule.getTime());
+		write("\nTimeStep:" + (int)state.schedule.getTime());
 		
 		double finalRepRatePrey = reproductionCollectPrey/state.schedule.getTime();
 		double finalDeathRatePrey = deathCollectPrey/state.schedule.getTime();
@@ -148,13 +157,13 @@ public abstract class Animal implements Steppable {
 		double finalRepRatePredator = reproductionCollectPredator/state.schedule.getTime();
 		double finalDeathRatePredator = deathCollectPredator/state.schedule.getTime();
 		
-		System.out.println("\n Final Stats:");
-		System.out.println("Prey:");
-		System.out.println("Death Rate: " + finalDeathRatePrey);
-		System.out.println("Reproduction Rate: " + finalRepRatePrey);
-		System.out.println("Predator:");
-		System.out.println("Death Rate: " + finalDeathRatePredator);
-		System.out.println("Reproduction Rate: " + finalRepRatePredator);
+		write("\n Final Stats:");
+		write("Prey:");
+		write("Death Rate: " + finalDeathRatePrey);
+		write("Reproduction Rate: " + finalRepRatePrey);
+		write("Predator:");
+		write("Death Rate: " + finalDeathRatePredator);
+		write("Reproduction Rate: " + finalRepRatePredator);
 		
 		
 	}
@@ -175,7 +184,7 @@ public abstract class Animal implements Steppable {
 		
 		
 		int choice = pvp.random.nextInt(100);
-		//System.out.println("Choice: " + choice);
+		//write("Choice: " + choice);
 		
 		//Each direction has biased defaultProbabilities
 		
@@ -248,9 +257,9 @@ public abstract class Animal implements Steppable {
 				directChangeTotal++;
 		}
 		
-		//System.out.println("Old Location: " + grid.getObjectLocation(this));
-		//System.out.println("Direction: " + direction + "Facing: " + facing);
-		//System.out.println("Velocity: " + velocity);
+		//write("Old Location: " + grid.getObjectLocation(this));
+		//write("Direction: " + direction + "Facing: " + facing);
+		//write("Velocity: " + velocity);
 		//Facing upward
 		/*switch(facing){
 		
@@ -494,7 +503,7 @@ public abstract class Animal implements Steppable {
 		}*/
 		}
 		
-		//System.out.println("New Location: " + grid.getObjectLocation(this));
+		//write("New Location: " + grid.getObjectLocation(this));
 		
 		}
 	
@@ -546,18 +555,18 @@ public abstract class Animal implements Steppable {
 	{
 		
 		int deltaX = prevLoc.x - animal.x;
-		System.out.println("deltaX: x - y = " + prevLoc.x + " - " + animal.x);
+		//write("deltaX: x - y = " + prevLoc.x + " - " + animal.x);
 		int deltaY = prevLoc.y - animal.y;
-		System.out.println("DeltaY: x - y = " + prevLoc.y + " - " + animal.y);
+		//write("DeltaY: x - y = " + prevLoc.y + " - " + animal.y);
 		int g = -1;
 		int o = -1;
 
 		
 		int slope = deltaX + deltaY;
 		
-		System.out.print("DeltaX =" + deltaX);
-		System.out.print(" DeltaY  = " + deltaY);
-		System.out.print("Slope: " + slope);
+		//write("DeltaX =" + deltaX);
+		//write(" DeltaY  = " + deltaY);
+		write("Slope, " + slope);
 		
 		if(Math.abs(slope) > 48)
 			return;
@@ -645,25 +654,26 @@ public abstract class Animal implements Steppable {
 			increase = Math.round(increase);
 			
 			
-			System.out.println("Goal: " + actualProb[g]);
-			System.out.println("New Goal Prob: " + increase);
-			System.out.println("Opposite: " + actualProb[o]);
-			//System.out.println("New Opp Prob: " + decrease);
+			write("Goal: " + actualProb[g]);
+			write("New Goal Prob: " + increase);
+			write("Opposite: " + actualProb[o]);
+			//write("New Opp Prob: " + decrease);
 		}
 		else
 		{
 			increase = actualProb[g]*.10;
 			increase = Math.round(increase);
 			
-			System.out.println("Goal: " + actualProb[g]);
-			System.out.println("New Goal Prob: " + increase);
-			System.out.println("Opposite: " + actualProb[o]);
-			//System.out.println("New Opp Prob: " + decrease);
+			write("Goal: " + actualProb[g]);
+			write("New Goal Prob: " + increase);
+			write("Opposite: " + actualProb[o]);
+			//write("New Opp Prob: " + decrease);
 		}
 		
 		double sum = 0;
 		for(int j = 0; j < 8; j++)
 		{
+			write("aP" + j + ": " + actualProb[j]);
 			
 			if(j != g)
 			{
@@ -675,19 +685,26 @@ public abstract class Animal implements Steppable {
 		{
 			actualProb[g] = actualProb[g]+ increase;
 			actualProb[o] = actualProb[o] - increase;
-			System.out.println("Normal Scenario");
+			write(", Normal Scenario");
 		}
 		else if(increase < sum && increase > actualProb[o])
 		{
 			int newIndex = pvp.random.nextInt(8);
 			actualProb[g] = actualProb[g]+ increase;
 			actualProb[newIndex] = actualProb[newIndex] - increase;
-			System.out.println("Opposite Prob is all wiped out");
+			write(", Opposite Prob is all wiped out");
 		}
 		else if(increase >= sum)
 		{
-			System.out.println("Increase is too much!");
+			write(", Increase is too much!");
 		}
+		
+		
+		for(int j = 0; j < 8; j++)
+		
+			write("endaP" + j + ": " + actualProb[j]);
+		
+		
 		
 	}
 	/**
@@ -699,16 +716,16 @@ public abstract class Animal implements Steppable {
 	{
 		
 		int deltaX = animal.x - goal.x;
-		System.out.println("deltaX: x - y = " + animal.x + " - " + goal.x);
+		//write("deltaX: x - y = " + animal.x + " - " + goal.x);
 		int deltaY = animal.y - goal.y;
-		System.out.println("DeltaY: x - y = " + animal.y + " - " + goal.y);
+		//write("DeltaY: x - y = " + animal.y + " - " + goal.y);
 	
 		
 		int slope = deltaX + deltaY;
 		
-		System.out.print("DeltaX =" + deltaX);
-		System.out.print(" DeltaY  = " + deltaY);
-		System.out.print("Slope: " + slope);
+		//write("DeltaX =" + deltaX);
+		//write(" DeltaY  = " + deltaY);
+		write("Slope, " + slope);
 		
 		if(Math.abs(slope) > 48)
 			return;
@@ -731,9 +748,9 @@ public abstract class Animal implements Steppable {
 		int deltaY = animal.y - avoid.y;
 		int slope = deltaX + deltaY;
 		
-		System.out.print("DeltaX =" + deltaX);
-		System.out.print(" DeltaY  = " + deltaY);
-		System.out.print("Slope: " + slope);
+		//write("DeltaX =" + deltaX);
+		//write(" DeltaY  = " + deltaY);
+		write("Slope, " + slope);
 		
 		int x, y;
 		
@@ -808,6 +825,24 @@ public abstract class Animal implements Steppable {
 		
 		
 		return new Int2D(x, y);
+	}
+	
+	protected void write(String out)
+	{
+		try
+		{
+			writer.append(out);
+			//writer.append('\n');
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	protected void append(String out)
+	{
+		outputString = outputString + "," + out;
 	}
 
 	}
