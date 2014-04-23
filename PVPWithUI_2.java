@@ -21,7 +21,7 @@ public class PVPWithUI_2 extends GUIState {
 	public static int worldWidth = 500;
 	public static int worldHeight = 500;
 	public static int numPrey = 100;
-	public static int numPred = 10;
+	public static int numPred = 3;
 	
 	SparseGridPortrayal2D worldPortrayal = new SparseGridPortrayal2D();
 	

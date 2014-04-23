@@ -8,13 +8,13 @@ import sim.util.Int2D;
 
 public class Food implements Steppable {
 
-	protected double amount = 1.0;
+	protected double amount = 1000;
 	private double diseasePr = .005;
 	private int diseaseRandNum = 10000;
 	private double repPr = .0005;
 	private int repRandNum = 10000;
 	private boolean diseased = false;
-	private double regrowthRate = .025;
+	private double regrowthRate = .25;
 	public SparseGrid2D grid;
 	protected Stoppable stop;
 
@@ -27,7 +27,7 @@ public class Food implements Steppable {
 		grid = pvp.world;
 		
 		//Slowly grows back
-		//amount += regrowthRate;
+		amount += regrowthRate;
 		
 		//Chance of disease
 		//this.diseaseChance(pvp);
@@ -47,7 +47,7 @@ public class Food implements Steppable {
 			diseased = true;
 		
 	}
-	
+	*/
 	public void reproductionChance(PVP_2 pvp){
 		
 		// reproduction rate
@@ -60,7 +60,7 @@ public class Food implements Steppable {
 		if(repro < repPr)
 			this.spread(grid, pvp);
 	}
-	*/
+	
 	
 	/*
 	 * Used for disease
