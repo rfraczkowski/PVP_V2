@@ -24,6 +24,18 @@ public abstract class Animal implements Steppable {
 	protected int direction;
 	protected int lastMeal = 0;
 	protected double[] actualProb = {11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11};
+	protected double[][] learnedProb = {
+			
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}, 
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}, 
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}
+	};
 	protected double[] learnedMov = actualProb;
 	//Arrays for remembering policy
 	protected double[] upLeft = {};
@@ -551,39 +563,46 @@ public abstract class Animal implements Steppable {
 	 * Input: Animal's location, the previous state of the world, 
 	 * Output:Movement with new policy
 	 */
-	protected void reward(Int2D animal, SimState pvp, boolean isLow)
+	protected void reward(Int2D animal, Int2D goal, SimState pvp, boolean isLow)
 	{
-		
-		int deltaX = prevLoc.x - animal.x;
+		int deltaX = animal.x - goal.x;
 		//write("deltaX: x - y = " + prevLoc.x + " - " + animal.x);
-		int deltaY = prevLoc.y - animal.y;
+		int deltaY = animal.y - goal.y;
 		//write("DeltaY: x - y = " + prevLoc.y + " - " + animal.y);
 		int g = -1;
 		int o = -1;
-
+		
+		double[] tempProb; 
 		
 		int slope = deltaX + deltaY;
 		
 		//write("DeltaX =" + deltaX);
 		//write(" DeltaY  = " + deltaY);
-		write("Slope, " + slope);
+		write("" + slope);
 		
 		if(Math.abs(slope) > 48)
 			return;
 		
+		//Index Positions
+		/*
+		 *  0 - 1 - 2
+		 *  3 - 4 - 5
+		 *  6 - 7 - 8
+		 */
 		
 		if(slope == 0)
 		{
-			//If new Loc is upper right
+			//If new Loc is upper right POSITION INDEX 2
 			if(deltaX == -1)
 			{
 				g = 2;
 				
 				o = 6;
 				
+				
 			}
-			//Goal is lower left
-			else if(deltaY == 1)
+			//Goal is lower left POSITION INDEX 5
+			else if(deltaX == 1)
 			{
 				g = 6;
 				o = 2;
@@ -592,7 +611,7 @@ public abstract class Animal implements Steppable {
 			}
 			else
 			{
-				//You are on the goal
+				//You are on the goal POSITION INDEX 4
 				g = 4;
 				o = pvp.random.nextInt(8);
 				
@@ -602,17 +621,19 @@ public abstract class Animal implements Steppable {
 		}
 		else if(slope == 1)
 		{
-			//Goal is directly up
+			//Goal is directly up POSITION INDEX 1
 			if(deltaX == 0)
 			{
 				g = 1;
 				o = 7;
+	
 			}
-			//Goal is direct to left
+			//Goal is direct to left POSITION INDEX 3
 			else
 			{
 				g = 3;
 				o = 5;
+				
 			}
 		}
 		else if(slope == -1)
@@ -645,67 +666,75 @@ public abstract class Animal implements Steppable {
 			o = 0;
 		}
 		
+		tempProb = learnedProb[g];
 		double increase;
 		double decrease;
 		if(isLow)
 		{
 			
-			increase = actualProb[g]*.1;
+			increase = tempProb[g]*.1;
 			increase = Math.round(increase);
 			
 			
-			write("Goal: " + actualProb[g]);
-			write("New Goal Prob: " + increase);
-			write("Opposite: " + actualProb[o]);
+			//write("Goal, " + actualProb[g]);
+			//write("New Goal Prob: " + increase);
+			//write("Opposite: " + actualProb[o]);
 			//write("New Opp Prob: " + decrease);
 		}
 		else
 		{
-			increase = actualProb[g]*.10;
+			increase = tempProb[g]*.10;
 			increase = Math.round(increase);
 			
-			write("Goal: " + actualProb[g]);
-			write("New Goal Prob: " + increase);
-			write("Opposite: " + actualProb[o]);
+			//write("Goal: " + actualProb[g]);
+			//write("New Goal Prob: " + increase);
+			//write("Opposite: " + actualProb[o]);
 			//write("New Opp Prob: " + decrease);
 		}
 		
 		double sum = 0;
 		for(int j = 0; j < 8; j++)
 		{
-			write("aP" + j + ": " + actualProb[j]);
+			//Write before positions
+			write(tempProb[j] + ",");
 			
 			if(j != g)
 			{
-				sum += actualProb[j];
+				sum += tempProb[j];
 			}
 		}
 		
-		if(increase < sum && increase < actualProb[o])
+		//Write before position sum
+		write(sum + ",");
+		if(increase < sum && increase < tempProb[o])
 		{
-			actualProb[g] = actualProb[g]+ increase;
-			actualProb[o] = actualProb[o] - increase;
-			write(", Normal Scenario");
+			tempProb[g] += increase;
+			tempProb[o] -= increase;
+			//write(", Normal Scenario");
 		}
-		else if(increase < sum && increase > actualProb[o])
+		else if(increase < sum && increase > tempProb[o])
 		{
 			int newIndex = pvp.random.nextInt(8);
-			actualProb[g] = actualProb[g]+ increase;
-			actualProb[newIndex] = actualProb[newIndex] - increase;
-			write(", Opposite Prob is all wiped out");
+			tempProb[g] += increase;
+			tempProb[newIndex] -= increase;
+			//write(", Opposite Prob is all wiped out");
 		}
 		else if(increase >= sum)
 		{
-			write(", Increase is too much!");
+			//write(", Increase is too much!");
 		}
 		
-		
+		sum = 0;
 		for(int j = 0; j < 8; j++)
+		{
+			write(tempProb[j] + ",");
+			sum += tempProb[j];
+		}
 		
-			write("endaP" + j + ": " + actualProb[j]);
+		write(sum + ",");
 		
 		
-		
+		actualProb = tempProb;
 	}
 	/**
 	 * Purpose: Sets up the movement preference for the animal
@@ -725,15 +754,15 @@ public abstract class Animal implements Steppable {
 		
 		//write("DeltaX =" + deltaX);
 		//write(" DeltaY  = " + deltaY);
-		write("Slope, " + slope);
+		write(slope + ",");
 		
 		if(Math.abs(slope) > 48)
 			return;
 		
 		if(animal.x == goal.x && animal.y == goal.y)
-			reward(animal, pvp, false);
+			reward(animal, goal, pvp, false);
 		else
-			reward(animal, pvp, true);
+			reward(animal, goal, pvp, true);
 		
 	}
 	

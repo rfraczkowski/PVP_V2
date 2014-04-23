@@ -68,7 +68,7 @@ public class Predator extends Animal implements Steppable{
 		{
 			outputFile = new File(dir, ID + ".csv");
 			writer = new FileWriter(outputFile);
-			write("AgentPosX, AgentPosY, FoodX, FoodY, DeltaX, DeltaY, Direction, Other");
+			write("AgentPosX, AgentPosY, FoodX, FoodY, DeltaX, DeltaY, Direction, Other, Slope, Slope, Before Position: 0, 1, 2, 3, 4, 5, 6, 7, 8, Sum, After Pos: 0, 1, 2, 3, 4, 5, 6, 7, Sum");
 		}
 		catch(IOException e)
 		{
