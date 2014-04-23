@@ -140,7 +140,7 @@ public class Predator extends Animal implements Steppable{
 		//Death Calculations
 		if(this.iDie(state)){
 		 	//this.emotionsUpdate();
-			this.printStats();
+			//this.printStats();
 			return;
 		}
 		

@@ -67,6 +67,7 @@ public class Prey extends Animal implements Steppable{
 			outputFile = new File(dir, ID + ".csv");
 			
 			writer = new FileWriter(outputFile);
+			write("AgentPosX, AgentPosY, FoodX, FoodY, DeltaX, DeltaY, Direction, Other, Slope, Slope, Before Position: 0, 1, 2, 3, 4, 5, 6, 7, 8, Sum, After Pos: 0, 1, 2, 3, 4, 5, 6, 7, Sum");
 		}
 		catch(IOException e)
 		{
@@ -145,7 +146,7 @@ public class Prey extends Animal implements Steppable{
 	 
 	 /**Learning **/
 
-	/*	Int2D cord = grid.getObjectLocation(this);
+		Int2D cord = grid.getObjectLocation(this);
 		Bag result = new Bag();
 		IntBag xPos = new IntBag();
 		IntBag yPos = new IntBag();
@@ -153,7 +154,7 @@ public class Prey extends Animal implements Steppable{
 		
 		grid.getMooreNeighbors(cord.x, cord.y, 1, Grid2D.TOROIDAL, result, xPos, yPos);
 		
-		write("Prey Position: " + cord.x + "," + cord.y + ": ");
+		write("\n" + cord.x + "," + cord.y + ",");
 		boolean first = true;
 		for(int i = 0; i < result.numObjs; i++)
 		{
@@ -163,9 +164,12 @@ public class Prey extends Animal implements Steppable{
 			if(temp instanceof Predator && first == true){
 				
 				Int2D pred = grid.getObjectLocation(temp);
-				write("Located: " + pred.x + " " + pred.y);
+				write(pred.x + "," + pred.y + ",");
 				int deltaX = pred.x - cord.x;
 				int deltaY = pred.y - cord.y;
+				write(deltaX + "," + deltaY + ",");
+				
+				write(direction + ",");
 				
 				Int2D opp = this.find_Opp(cord, pred);
 				this.setMovementPref(cord, opp, state);
@@ -186,7 +190,7 @@ public class Prey extends Animal implements Steppable{
 				first = false;
 			}
 		}
-	 */
+	 
 	 
 	 //Chance of Eating
 	 if(this.willEat(grid, state)){

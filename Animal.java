@@ -693,7 +693,7 @@ public abstract class Animal implements Steppable {
 		}
 		
 		double sum = 0;
-		for(int j = 0; j < 8; j++)
+		for(int j = 0; j < 9; j++)
 		{
 			//Write before positions
 			write(tempProb[j] + ",");
@@ -725,7 +725,7 @@ public abstract class Animal implements Steppable {
 		}
 		
 		sum = 0;
-		for(int j = 0; j < 8; j++)
+		for(int j = 0; j < 9; j++)
 		{
 			write(tempProb[j] + ",");
 			sum += tempProb[j];
