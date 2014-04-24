@@ -26,7 +26,7 @@ public class Predator extends Animal implements Steppable{
 	protected static int defaultRepRandNum;
 	protected int eatingChance;
 	private static double actualRepRate;
-	private static double defaultRepRate = .05;
+	private static double defaultRepRate = .1;
 	private Bag seen;
 	protected double diseaseRecovery = .25;
 	private boolean caught = false;
@@ -68,7 +68,7 @@ public class Predator extends Animal implements Steppable{
 		{
 			outputFile = new File(dir, ID + ".csv");
 			writer = new FileWriter(outputFile);
-			write("AgentPosX, AgentPosY, FoodX, FoodY, DeltaX, DeltaY, Direction, Other, Slope, Slope, Before Position: 0, 1, 2, 3, 4, 5, 6, 7, 8, Sum, After Pos: 0, 1, 2, 3, 4, 5, 6, 7, Sum");
+			write("AgentPosX, AgentPosY, FoodX, FoodY, DeltaX, DeltaY, Direction, Slope, Slope, Before Position: 0, 1, 2, 3, 4, 5, 6, 7, 8, Sum, After Pos: 0, 1, 2, 3, 4, 5, 6, 7, Sum, EmotionRate");
 		}
 		catch(IOException e)
 		{
@@ -197,7 +197,7 @@ public class Predator extends Animal implements Steppable{
 			return;
 		}
 		
-	
+		write("," + emotions);
 		
 		/*
 		//Visual Processor
@@ -230,6 +230,7 @@ public class Predator extends Animal implements Steppable{
 			caught = true;
 			lastMeal = 0;
 			prey.stop.stop();
+			emotions += eRate;
 			numPrey--;
 			grid.remove(prey);
 			
@@ -319,7 +320,7 @@ public class Predator extends Animal implements Steppable{
 				
 				if(obj.getClass().equals(Prey.class)){
 					//write("\nPredator Ate");
-					write("Predator Would have eaten");
+					write("Predator ate");
 					this.eat(obj, state);
 					return true;
 				}// end of if

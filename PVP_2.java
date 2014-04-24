@@ -5,6 +5,8 @@
 
 package sim.app.PVP_V2.src.pvp;
 
+import java.io.File;
+
 import sim.engine.*;
 import sim.util.*;
 import sim.field.grid.*;
@@ -25,6 +27,7 @@ public class PVP_2 extends SimState{
 	private static int numPrey;
 	//private static double expectationMapDecay;
 	private static int numFood;
+	protected static File dir = new File("runs/run_"+ System.currentTimeMillis()%600);
 	//Number of Clusters
 	//private final int clusters;
 	//private final int [][] clust;
@@ -54,7 +57,7 @@ public class PVP_2 extends SimState{
 		super.start();
 		world = new SparseGrid2D(gridWidth, gridHeight);
 		//grid.clear();
-		Animal.initialize(numPrey, numPred);
+		Animal.initialize(numPrey, numPred, dir);
 		//ONLY RANDOM NUMBER GENERATOR
 		MersenneTwisterFast twister = new MersenneTwisterFast();
 		

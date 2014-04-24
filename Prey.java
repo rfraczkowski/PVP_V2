@@ -20,7 +20,7 @@ public class Prey extends Animal implements Steppable{
 	private double actualDeathRate;
 	private static int deathRandNum = 1000;
 	private static double agingDeathMod;
-	private static double hungerDeathMod;
+	private static double hungerDeathMod = .05;
 	private static int lastMealLow = 15;
 	private static int lastMealMed;
 	private static int lastMealHigh;
@@ -67,7 +67,7 @@ public class Prey extends Animal implements Steppable{
 			outputFile = new File(dir, ID + ".csv");
 			
 			writer = new FileWriter(outputFile);
-			write("AgentPosX, AgentPosY, FoodX, FoodY, DeltaX, DeltaY, Direction, Other, Slope, Slope, Before Position: 0, 1, 2, 3, 4, 5, 6, 7, 8, Sum, After Pos: 0, 1, 2, 3, 4, 5, 6, 7, Sum");
+			write("AgentPosX, AgentPosY, FoodX, FoodY, DeltaX, DeltaY, Direction, Slope, Slope, Before Position: 0, 1, 2, 3, 4, 5, 6, 7, 8, Sum, After Pos: 0, 1, 2, 3, 4, 5, 6, 7, Sum, EmotionRate");
 		}
 		catch(IOException e)
 		{
@@ -168,6 +168,7 @@ public class Prey extends Animal implements Steppable{
 				int deltaX = pred.x - cord.x;
 				int deltaY = pred.y - cord.y;
 				write(deltaX + "," + deltaY + ",");
+				emotions -= eRate;
 				
 				write(direction + ",");
 				
@@ -188,6 +189,7 @@ public class Prey extends Animal implements Steppable{
 				Int2D food = grid.getObjectLocation(temp);
 				this.setMovementPref(cord, food, state);
 				first = false;
+				//emotions += 1;
 			}
 		}
 	 
@@ -198,6 +200,8 @@ public class Prey extends Animal implements Steppable{
 			//this.printStats();
 		return;
 	 }
+	 
+	 write("," + emotions);
 	 /*
 	 //See & process
 	 else 
@@ -244,6 +248,7 @@ public class Prey extends Animal implements Steppable{
 		//write(p);
 			Food food = (Food) p;
 			assert(food != null);
+			emotions += eRate;
 			write("Prey ate food");
 			/*if(food.isDiseased()){
 				this.setDisease(true);

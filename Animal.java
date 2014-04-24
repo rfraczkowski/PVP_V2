@@ -16,9 +16,12 @@ public abstract class Animal implements Steppable {
 	protected boolean isDiseased = false;
 	protected FileWriter writer;
 	protected File outputFile;
-	protected File dir = new File("~/Documents/SeniorProject/corun_1");
+	protected static File dir;
 	protected String outputString = "";
 
+	protected double mood = 0.0;
+	protected double emotions = 0.0;
+	protected double eRate = .1;
 	protected int age = 0;
 	protected int oldAge; 
 	protected int direction;
@@ -91,9 +94,10 @@ public abstract class Animal implements Steppable {
 		*Input:
 		*Output:
 	**/
-	protected final static void initialize(int prey, int pred){
+	protected final static void initialize(int prey, int pred, File directory){
 		numPrey = prey;
 		numPredator = pred;
+		dir = directory;
 	}
 	
 	/**
@@ -578,7 +582,7 @@ public abstract class Animal implements Steppable {
 		
 		//write("DeltaX =" + deltaX);
 		//write(" DeltaY  = " + deltaY);
-		write("" + slope);
+		write(slope + ",");
 		
 		if(Math.abs(slope) > 48)
 			return;
@@ -779,7 +783,7 @@ public abstract class Animal implements Steppable {
 		
 		//write("DeltaX =" + deltaX);
 		//write(" DeltaY  = " + deltaY);
-		write("Slope, " + slope);
+		//write("Slope, " + slope);
 		
 		int x, y;
 		
