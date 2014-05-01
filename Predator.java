@@ -38,7 +38,7 @@ public class Predator extends Animal implements Steppable{
 	 * Input: state of the world, world, and ID number
 	 * Output: None
 	 */
-	Predator(SimState state, SparseGrid2D grid, int num){
+	Predator(SimState state, SparseGrid2D grid, int num, double[][] parentLearn){
 		
 		int directionNum= state.random.nextInt(3);
 		if(directionNum == 0)
@@ -51,6 +51,7 @@ public class Predator extends Animal implements Steppable{
 			direction = 3;
 		
 		oldAge = 20;
+		learnedProb = parentLearn;
 
 		//vP = new VisualProcessor(state);
 		//map = new ExpectationMap(grid.getWidth(), grid.getHeight(), expectMapDecayRate);
@@ -61,9 +62,9 @@ public class Predator extends Animal implements Steppable{
 		//maxRep = 200;
 		//actualDeathRate = defaultDeathRate;
 		ID = "F" + num;
-		dir.mkdirs();
+		//dir.mkdirs();
 		
-		
+		/*
 		try
 		{
 			outputFile = new File(dir, ID + ".csv");
@@ -73,7 +74,7 @@ public class Predator extends Animal implements Steppable{
 		catch(IOException e)
 		{
 			e.printStackTrace();
-		}
+		}*/
 		//eatingChance = 1;
 	}
 
@@ -137,20 +138,7 @@ public class Predator extends Animal implements Steppable{
 		// Timesteps since last social interaction
 		//write("Last Meal: " + lastMeal + " timesteps");
 		*/
-		//Death Calculations
-		if(this.iDie(state)){
-		 	//this.emotionsUpdate();
-			//this.printStats();
-			return;
-		}
-		
-		//Reproduction Calculations
-		else if(this.iReproduce(state)){
-		 	//this.emotionsUpdate();
-
-			//this.printStats();
-			return;
-		}
+	
 		
 		/****** LEARNING/ VISION ********************/
 		Int2D cord = grid.getObjectLocation(this);
@@ -162,7 +150,7 @@ public class Predator extends Animal implements Steppable{
 		grid.getMooreNeighbors(cord.x, cord.y, 1, Grid2D.TOROIDAL, result, xPos, yPos);
 		
 	
-		write("\n" + cord.x + "," + cord.y + ",");
+		//write("\n" + cord.x + "," + cord.y + ",");
 		
 		boolean first = true;
 		for(int i = 0; i < result.numObjs; i++)
@@ -174,14 +162,14 @@ public class Predator extends Animal implements Steppable{
 				
 				//write("Found Food! : ");
 				Int2D prey = grid.getObjectLocation(temp);
-				write(prey.x + "," + prey.y + ",");
+				//write(prey.x + "," + prey.y + ",");
 				int deltaX = prey.x - cord.x;
 				int deltaY = prey.y - cord.y;
 				
 				int direction = deltaX + deltaY;
-				write(deltaX + "," + deltaY + ",");
+				//write(deltaX + "," + deltaY + ",");
 				
-				write(direction + ",");
+				//write(direction + ",");
 				
 				this.setMovementPref(cord, prey, state);
 				first = false;
@@ -197,8 +185,22 @@ public class Predator extends Animal implements Steppable{
 			return;
 		}
 		
-		write("," + emotions);
+		//write("," + emotions);
 		
+		//Death Calculations
+		if(this.iDie(state)){
+		 	//this.emotionsUpdate();
+			//this.printStats();
+			return;
+		}
+		
+		//Reproduction Calculations
+		else if(this.iReproduce(state)){
+		 	//this.emotionsUpdate();
+
+			//this.printStats();
+			return;
+		}
 		/*
 		//Visual Processor
 		else{
@@ -232,6 +234,7 @@ public class Predator extends Animal implements Steppable{
 			prey.stop.stop();
 			emotions += eRate;
 			numPrey--;
+			preyCaught++;
 			grid.remove(prey);
 			
 			//write("Prey was eaten by Predator");
@@ -320,7 +323,7 @@ public class Predator extends Animal implements Steppable{
 				
 				if(obj.getClass().equals(Prey.class)){
 					//write("\nPredator Ate");
-					write("Predator ate");
+					//write("Predator ate");
 					this.eat(obj, state);
 					return true;
 				}// end of if
@@ -334,7 +337,7 @@ public class Predator extends Animal implements Steppable{
 		
 		//write("Predator Reproduced");
 		
-		Predator p = new Predator(state, grid, numPredator + 1);
+		Predator p = new Predator(state, grid, numPredator + 1, learnedProb);
 		numPredator++;
 		grid.setObjectLocation(p, grid.getObjectLocation(this));
 		Stoppable stop = state.schedule.scheduleRepeating(p);
@@ -403,6 +406,7 @@ public class Predator extends Animal implements Steppable{
 	}*/
 	
 	//Print Stats to screen
+	/*
 	public void printStats()
 	{
 		write("\n, " + ID);
@@ -412,5 +416,5 @@ public class Predator extends Animal implements Steppable{
 		write(", lastSocial: " + lastSocial);
 		write(", directionChange: " + directChangeTotal + "\n");
 		
-	}
+	}*/
 }

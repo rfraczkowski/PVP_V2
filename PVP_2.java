@@ -22,23 +22,35 @@ public class PVP_2 extends SimState{
 	private static int gridHeight;
 	private static int gridArea = 0;
 	//Rates and Numbers
-	private final static double foodPopRate = .4;
+	private final static double foodPopRate = .1;
 	private static int numPred;
 	private static int numPrey;
 	//private static double expectationMapDecay;
 	private static int numFood;
 	protected static File dir = new File("runs/run_"+ System.currentTimeMillis()%600);
+	protected double[][] initialProb = {
+			
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}, 
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}, 
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
+			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}
+	};
 	//Number of Clusters
-	//private final int clusters;
-	//private final int [][] clust;
+	private final int clusters;
+	private final int [][] clust;
 	
 	//Sets up the parameters of the world
 	public PVP_2(long seed)
 	{
 		super(seed);
-		//clusters = 20;
+		clusters = 20;
 		//System.out.println("Grid Area: " + gridArea + " numFood: " + numFood);
-		//clust = new int[clusters][2];
+		clust = new int[clusters][2];
 	}
 	
 	public static void initializeUI(int gridW, int gridH, int prey, int pred){
@@ -72,7 +84,7 @@ public class PVP_2 extends SimState{
 			
 			//Placing them at random places around the initial food
 			Food p = new Food();
-			int direction = twister.nextInt(7);
+			//int direction = twister.nextInt(7);
 				
 			world.setObjectLocation(p, loc.x, loc.y);
 			Stoppable stop = schedule.scheduleRepeating(p);
@@ -81,20 +93,20 @@ public class PVP_2 extends SimState{
 		//System.out.println("Clusters: " + clusters);
 		
 		//Clustered Visual Food - FIRST SET
-		/*for(int h = 0; h < clusters; h++){
+		for(int h = 0; h < clusters; h++){
 			
 			
-			MutableInt2D loc = new MutableInt2D();
-			loc.x = world.tx(twister.nextInt());
-			loc.y = world.ty(twister.nextInt());
+			MutableInt2D fLoc = new MutableInt2D();
+			fLoc.x = world.tx(twister.nextInt());
+			fLoc.y = world.ty(twister.nextInt());
 			
-			clust[h][0] = loc.x;
-			clust[h][1] = loc.y;
+			clust[h][0] = fLoc.x;
+			clust[h][1] = fLoc.y;
 				
 			Food p = new Food();
 				
 				
-			world.setObjectLocation(p, loc.x, loc.y);
+			world.setObjectLocation(p, fLoc.x, fLoc.y);
 			Stoppable stop = schedule.scheduleRepeating(p);
 			p.makeStoppable(stop);
 		}
@@ -120,11 +132,11 @@ public class PVP_2 extends SimState{
 				p.makeStoppable(stop);
 				ycord = ycord + 1;
 			} // end of for*/
-		//} // end of clusters
+		} // end of clusters
 
 		for(int i=0; i<numPred; i++)
 		{
-			Predator p = new Predator(this, world, i);
+			Predator p = new Predator(this, world, i, initialProb);
 			
 			//Torodial random locations
 			MutableInt2D loc2 = new MutableInt2D();
@@ -141,7 +153,7 @@ public class PVP_2 extends SimState{
 		
 		for(int j=0; j<numPrey; j++)
 		{
-			Prey prey = new Prey(this, world, j);
+			Prey prey = new Prey(this, world, j, initialProb);
 			
 			//Torodial random locations
 			MutableInt2D loc3 = new MutableInt2D();

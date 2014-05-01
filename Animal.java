@@ -14,8 +14,8 @@ public abstract class Animal implements Steppable {
 
 	protected SparseGrid2D grid;
 	protected boolean isDiseased = false;
-	protected FileWriter writer;
-	protected File outputFile;
+	protected static FileWriter writer;
+	protected static File outputFile;
 	protected static File dir;
 	protected String outputString = "";
 
@@ -26,6 +26,7 @@ public abstract class Animal implements Steppable {
 	protected int oldAge; 
 	protected int direction;
 	protected int lastMeal = 0;
+	double interval = 500;
 	protected double[] actualProb = {11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11};
 	protected double[][] learnedProb = {
 			
@@ -76,6 +77,8 @@ public abstract class Animal implements Steppable {
 	protected int reproductionCollectPredator;
 	protected int lastSeenPrey;
 	protected int maxSeenPredator;
+	protected int preyCaught = 0;
+	protected int predOutran = 0;
 	protected int lastRep;
 	protected int maxRep;
 	protected static int maxSocial;
@@ -88,6 +91,7 @@ public abstract class Animal implements Steppable {
 	protected double diseaseTimestep;
 	protected int diseaseRandomNum = 100;
 	protected Int2D prevLoc;
+
 	
 	/**
 		*Purpose: 
@@ -98,6 +102,17 @@ public abstract class Animal implements Steppable {
 		numPrey = prey;
 		numPredator = pred;
 		dir = directory;
+		try
+		{
+			dir.mkdir();
+			outputFile = new File(dir, "run_.csv");
+			writer = new FileWriter(outputFile);
+			//write("AgentPosX, AgentPosY, FoodX, FoodY, DeltaX, DeltaY, Direction, Slope, Slope, Before Position: 0, 1, 2, 3, 4, 5, 6, 7, 8, Sum, After Pos: 0, 1, 2, 3, 4, 5, 6, 7, Sum, EmotionRate");
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -113,7 +128,7 @@ public abstract class Animal implements Steppable {
 		age++;
 		grid = pvp.world;
 		this.move(grid, pvp);
-		if(lastMeal >= oldAge)
+		/*if(lastMeal >= oldAge)
 		{
 			stop.stop();
 			
@@ -123,8 +138,10 @@ public abstract class Animal implements Steppable {
 				numPrey--;
 			
 			grid.remove(this);
-		}
-		/*age++;
+		}*/
+		
+		//printLP(state);
+		age++;
 		lastMeal++;
 		lastSocial++;
 		lastRep++;
@@ -132,9 +149,9 @@ public abstract class Animal implements Steppable {
 		lastSeenPredator++;
 		maxSeenPredator = 30;
 		//Start of every step uses default movement
-		actualProb = defaultProb;
+
 		velocity= 1;
-		vP = new VisualProcessor(state);
+	
 		 
 		if(lastNumPrey > numPrey)
 			deathCollectPrey += (lastNumPrey - numPrey);
@@ -146,18 +163,33 @@ public abstract class Animal implements Steppable {
 		else if(lastNumPredator < numPredator)
 			reproductionCollectPredator += (numPredator - lastNumPredator);
 		
-		write(state.schedule.getTime() + ", " + numPrey + ", " + numPredator);*/
+		if(state.schedule.getTime() % interval == 0)
+			printFinalStats(state);
+		
+		//write(state.schedule.getTime() + ", " + numPrey + ", " + numPredator);*/
 		if(numPrey == 0 || numPredator == 0){
+			write("End of sim,");
 			printFinalStats(state);
 			state.kill();
 		}
 		
-		/*
+		
 		lastNumPrey = numPrey;
-		lastNumPredator = numPredator;*/
+		lastNumPredator = numPredator;
 	
 	}
 
+	
+	public void printLP(SimState state)
+	{
+		write("\nTimeStep:" + (int)state.schedule.getTime());
+		write(" Learned Probability Array {\n");
+		//System.out.println(learnedProb.length);
+		//System.out.println(learnedProb[0].length);
+		for(int i = 0; i < (learnedProb.length); i++)
+			for(int j = 0; j < (learnedProb[0].length); j++)
+					write("|" + learnedProb[i][j] + "|");
+	}
 	/**
 		*Purpose: Prints the final stats of the simulation
 		*Input: SimState
@@ -165,21 +197,34 @@ public abstract class Animal implements Steppable {
 	**/
 	protected void printFinalStats(SimState state){
 		
-		write("\nTimeStep:" + (int)state.schedule.getTime());
+		write("\nTimeStep:" + (int)state.schedule.getTime() + ",");
 		
-		double finalRepRatePrey = reproductionCollectPrey/state.schedule.getTime();
-		double finalDeathRatePrey = deathCollectPrey/state.schedule.getTime();
+		double finalRepRatePrey = reproductionCollectPrey/interval;
+		double finalDeathRatePrey = deathCollectPrey/interval;
 		
-		double finalRepRatePredator = reproductionCollectPredator/state.schedule.getTime();
-		double finalDeathRatePredator = deathCollectPredator/state.schedule.getTime();
+		double finalRepRatePredator = reproductionCollectPredator/interval;
+		double finalDeathRatePredator = deathCollectPredator/interval;
+		double predOutranRate = predOutran/interval;
+		double preyCaughtRate = preyCaught/interval;
 		
-		write("\n Final Stats:");
-		write("Prey:");
-		write("Death Rate: " + finalDeathRatePrey);
-		write("Reproduction Rate: " + finalRepRatePrey);
-		write("Predator:");
-		write("Death Rate: " + finalDeathRatePredator);
-		write("Reproduction Rate: " + finalRepRatePredator);
+		write("Prey,");
+		write("Prey Total: " + numPrey + ",");
+		write("Death Rate: " + finalDeathRatePrey + ",");
+		write("Reproduction Rate: " + finalRepRatePrey + ",");
+		write("Learning Outrun Pred: " + predOutranRate + ",");
+		write("Predator,");
+		write("Predator Total: " + numPredator + ",");
+		write("Death Rate: " + finalDeathRatePredator + ",");
+		write("Reproduction Rate: " + finalRepRatePredator + ",");
+		write("Learning Catch Prey: " + preyCaughtRate + ",");
+		write("Food,");
+		write("Food Total" + ".1" + ",");
+		write("Food Clustered" + "Yes" + ",");
+		
+		reproductionCollectPrey = 0;
+		deathCollectPrey = 0;
+		reproductionCollectPredator = 0;
+		deathCollectPredator = 0;
 		
 		
 	}
@@ -582,7 +627,7 @@ public abstract class Animal implements Steppable {
 		
 		//write("DeltaX =" + deltaX);
 		//write(" DeltaY  = " + deltaY);
-		write(slope + ",");
+		//write(slope + ",");
 		
 		if(Math.abs(slope) > 48)
 			return;
@@ -670,13 +715,15 @@ public abstract class Animal implements Steppable {
 			o = 0;
 		}
 		
+		
+		/******************INCREASE GOAL *************************/
 		tempProb = learnedProb[g];
 		double increase;
 		double decrease;
 		if(isLow)
 		{
 			
-			increase = tempProb[g]*.1;
+			increase = tempProb[g]*.10;
 			increase = Math.round(increase);
 			
 			
@@ -687,7 +734,7 @@ public abstract class Animal implements Steppable {
 		}
 		else
 		{
-			increase = tempProb[g]*.10;
+			increase = tempProb[g]*.25;
 			increase = Math.round(increase);
 			
 			//write("Goal: " + actualProb[g]);
@@ -696,21 +743,25 @@ public abstract class Animal implements Steppable {
 			//write("New Opp Prob: " + decrease);
 		}
 		
+		/****************ADJUST OTHERS *********************/
+		
 		double sum = 0;
 		for(int j = 0; j < 9; j++)
 		{
 			//Write before positions
-			write(tempProb[j] + ",");
-			
-			if(j != g)
-			{
+			//write(tempProb[j] + ",");
+			//System.out.print("j:" + tempProb[j] + ",");
+			//if(j != g)
+			//{
 				sum += tempProb[j];
-			}
+			//}
 		}
 		
 		//Write before position sum
-		write(sum + ",");
-		if(increase < sum && increase < tempProb[o])
+		//write(sum + ",");
+		sum -= tempProb[g];
+		//If the increase is not more than the opposite square, adjust increase
+		if(increase < sum && increase <= tempProb[o])
 		{
 			tempProb[g] += increase;
 			tempProb[o] -= increase;
@@ -719,23 +770,39 @@ public abstract class Animal implements Steppable {
 		else if(increase < sum && increase > tempProb[o])
 		{
 			int newIndex = pvp.random.nextInt(8);
-			tempProb[g] += increase;
-			tempProb[newIndex] -= increase;
+			
+			//System.out.println("Increase: " + increase);
+			
+			if(tempProb[newIndex] >= increase)
+			{
+				tempProb[g] += increase;
+				tempProb[newIndex] -= increase;
+			}
+			else if(sum >= increase)
+			{
+				//sum -= increase;
+				double newP = sum/8;
+				for(int i = 0; i < 9; i++)
+				{
+					if(i != g)
+						tempProb[i] = newP;
+				}
+			}
+			
+		
+			//System.out.println();
 			//write(", Opposite Prob is all wiped out");
 		}
-		else if(increase >= sum)
-		{
-			//write(", Increase is too much!");
-		}
+		
 		
 		sum = 0;
 		for(int j = 0; j < 9; j++)
 		{
-			write(tempProb[j] + ",");
+			//write(tempProb[j] + ",");
 			sum += tempProb[j];
 		}
 		
-		write(sum + ",");
+		//write(sum + ",");
 		
 		
 		actualProb = tempProb;
@@ -758,7 +825,7 @@ public abstract class Animal implements Steppable {
 		
 		//write("DeltaX =" + deltaX);
 		//write(" DeltaY  = " + deltaY);
-		write(slope + ",");
+		//write(slope + ",");
 		
 		if(Math.abs(slope) > 48)
 			return;

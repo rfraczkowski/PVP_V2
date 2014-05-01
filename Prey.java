@@ -26,6 +26,7 @@ public class Prey extends Animal implements Steppable{
 	private static int lastMealHigh;
 	protected static int repRandNum = 1000;
 	protected int eatingChance;
+	protected boolean predSeen = false;
 	private static int repAge;
 	private static double defaultRepRate = .20;
 	private static double actualRepRate;
@@ -36,7 +37,7 @@ public class Prey extends Animal implements Steppable{
 	 * Purpose: Constructor
 	 * Input: State of the world, world, and its assigned ID
 	 */
-	Prey(SimState state, SparseGrid2D grid, int num){
+	Prey(SimState state, SparseGrid2D grid, int num, double[][] parentLearn){
 	
 		int directionNum= state.random.nextInt(3);
 		if(directionNum == 0)
@@ -49,6 +50,8 @@ public class Prey extends Animal implements Steppable{
 			direction = 3;
 		
 		oldAge = 10;
+		
+		learnedProb = parentLearn;
 		/*
 		vP = new VisualProcessor(state);
 		map = new ExpectationMap(grid.getWidth(), grid.getHeight(), expectMapDecayRate);
@@ -60,8 +63,9 @@ public class Prey extends Animal implements Steppable{
 		reproductionAge = repAge;
 		*/
 		ID = "R" + num;
-		dir.mkdirs();
+		//dir.mkdirs();
 		
+		/*
 		try
 		{
 			outputFile = new File(dir, ID + ".csv");
@@ -130,6 +134,91 @@ public class Prey extends Animal implements Steppable{
 	 }
 		
 	 */
+
+	 
+	 /**Learning **/
+
+	 	
+		Int2D cord = grid.getObjectLocation(this);
+		assert(cord != null);
+		assert(cord.x > 0);
+		assert(cord.y > 0);
+		
+		Bag result = new Bag();
+		IntBag xPos = new IntBag();
+		IntBag yPos = new IntBag();
+		
+		assert(this != null);
+		//System.out.println(cord);
+		//System.out.println(cord.x);
+		//System.out.println(cord.y);
+
+		grid.getMooreNeighbors(cord.x, cord.y, 1, Grid2D.TOROIDAL, result, xPos, yPos);
+		
+		//write("\n" + cord.x + "," + cord.y + ",");
+		boolean first = true;
+		for(int i = 0; i < result.numObjs; i++)
+		{
+			Object temp = result.get(i);
+			//write("Result: " + temp);
+			
+			if(temp instanceof Predator && first == true){
+				
+				Int2D pred = grid.getObjectLocation(temp);
+				//write(pred.x + "," + pred.y + ",");
+				predSeen = true;
+				//write(deltaX + "," + deltaY + ",");
+				emotions -= eRate;
+				
+				//write(direction + ",");
+				
+				Int2D opp = this.find_Opp(cord, pred);
+				this.setMovementPref(cord, opp, state);
+				first = false;
+			}
+			else
+			{
+				if(predSeen == true)
+					predOutran++;
+				predSeen = false;
+			}
+			
+			
+		}
+		
+		Bag food = new Bag();
+		
+		for(int i = 0; i < result.numObjs; i++)
+		{
+			Object temp = result.get(i);
+			
+			if(temp instanceof Food && first == true)
+			{
+				food.add(temp);
+				//emotions += 1;
+			}
+			
+		}
+		if(food.size()>0)
+		{
+			int random = state.random.nextInt(food.size());
+			Food goal = (Food)food.remove(random);
+			Int2D foodLoc = grid.getObjectLocation(goal);
+			this.setMovementPref(cord, foodLoc, state);
+		}
+		
+	 
+	 
+	 //Chance of Eating
+	 if(this.willEat(grid, state)){
+		 	//this.updateEmotions();
+			//this.printStats();
+		return;
+	 }
+	 
+	 //write("," + emotions);
+	 
+	 
 	 //Death Chance
 	 if(this.iDie(state)){
 		 	//this.updateEmotions();
@@ -143,65 +232,6 @@ public class Prey extends Animal implements Steppable{
 		   //this.printStats();
 		 return;
 	 }
-	 
-	 /**Learning **/
-
-		Int2D cord = grid.getObjectLocation(this);
-		Bag result = new Bag();
-		IntBag xPos = new IntBag();
-		IntBag yPos = new IntBag();
-		
-		
-		grid.getMooreNeighbors(cord.x, cord.y, 1, Grid2D.TOROIDAL, result, xPos, yPos);
-		
-		write("\n" + cord.x + "," + cord.y + ",");
-		boolean first = true;
-		for(int i = 0; i < result.numObjs; i++)
-		{
-			Object temp = result.get(i);
-			//write("Result: " + temp);
-			
-			if(temp instanceof Predator && first == true){
-				
-				Int2D pred = grid.getObjectLocation(temp);
-				write(pred.x + "," + pred.y + ",");
-				int deltaX = pred.x - cord.x;
-				int deltaY = pred.y - cord.y;
-				write(deltaX + "," + deltaY + ",");
-				emotions -= eRate;
-				
-				write(direction + ",");
-				
-				Int2D opp = this.find_Opp(cord, pred);
-				this.setMovementPref(cord, opp, state);
-				first = false;
-			}
-			
-			
-		}
-		
-		for(int i = 0; i < result.numObjs; i++)
-		{
-			Object temp = result.get(i);
-			
-			if(temp instanceof Food && first == true)
-			{
-				Int2D food = grid.getObjectLocation(temp);
-				this.setMovementPref(cord, food, state);
-				first = false;
-				//emotions += 1;
-			}
-		}
-	 
-	 
-	 //Chance of Eating
-	 if(this.willEat(grid, state)){
-		 	//this.updateEmotions();
-			//this.printStats();
-		return;
-	 }
-	 
-	 write("," + emotions);
 	 /*
 	 //See & process
 	 else 
@@ -249,7 +279,7 @@ public class Prey extends Animal implements Steppable{
 			Food food = (Food) p;
 			assert(food != null);
 			emotions += eRate;
-			write("Prey ate food");
+			//write("Prey ate food");
 			/*if(food.isDiseased()){
 				this.setDisease(true);
 				this.diseaseTimestep = state.schedule.getTime();
@@ -281,7 +311,7 @@ public class Prey extends Animal implements Steppable{
 	public void reproduce(SimState state)
 	{
 		
-		Prey p = new Prey(state, grid, numPrey + 1);
+		Prey p = new Prey(state, grid, numPrey + 1, learnedProb);
 		numPrey++;
 		grid.setObjectLocation(p, grid.getObjectLocation(this));
 		Stoppable stop = state.schedule.scheduleRepeating(p);
