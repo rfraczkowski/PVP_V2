@@ -138,10 +138,10 @@ public class Predator extends Animal implements Steppable{
 		// Timesteps since last social interaction
 		//write("Last Meal: " + lastMeal + " timesteps");
 		*/
-	
+
 		
 		/****** LEARNING/ VISION ********************/
-		Int2D cord = grid.getObjectLocation(this);
+		/*Int2D cord = grid.getObjectLocation(this);
 		Bag result = new Bag();
 		IntBag xPos = new IntBag();
 		IntBag yPos = new IntBag();
@@ -176,7 +176,7 @@ public class Predator extends Animal implements Steppable{
 			}
 			
 			
-		}
+		}*/
 		
 		//Will I eat?
 		if(this.willEat(grid, state)){

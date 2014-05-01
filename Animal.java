@@ -22,11 +22,13 @@ public abstract class Animal implements Steppable {
 	protected double mood = 0.0;
 	protected double emotions = 0.0;
 	protected double eRate = .1;
+	protected static int preyStay = 0;
+	protected static int predStay = 0;
 	protected int age = 0;
 	protected int oldAge; 
 	protected int direction;
 	protected int lastMeal = 0;
-	double interval = 500;
+	static double interval = 500;
 	protected double[] actualProb = {11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11};
 	protected double[][] learnedProb = {
 			
@@ -68,17 +70,17 @@ public abstract class Animal implements Steppable {
 	protected Stoppable stop;
 	//protected ExpectationMap map;
 	protected static int maxHunger;
-	protected int lastNumPrey = 0;
+	protected static int lastNumPrey = 0;
 	protected int lastNumPredator = 0;
 	protected int lastSeenPredator;
-	protected int deathCollectPrey;
-	protected int deathCollectPredator;
-	protected int reproductionCollectPrey;
-	protected int reproductionCollectPredator;
+	protected static int deathCollectPrey;
+	protected static int deathCollectPredator;
+	protected static int reproductionCollectPrey;
+	protected static int reproductionCollectPredator;
 	protected int lastSeenPrey;
 	protected int maxSeenPredator;
-	protected int preyCaught = 0;
-	protected int predOutran = 0;
+	protected static int preyCaught = 0;
+	protected static int predOutran = 0;
 	protected int lastRep;
 	protected int maxRep;
 	protected static int maxSocial;
@@ -105,7 +107,7 @@ public abstract class Animal implements Steppable {
 		try
 		{
 			dir.mkdir();
-			outputFile = new File(dir, "run_.csv");
+			outputFile = new File(dir, "run_" + System.currentTimeMillis()%600 + ".csv");
 			writer = new FileWriter(outputFile);
 			//write("AgentPosX, AgentPosY, FoodX, FoodY, DeltaX, DeltaY, Direction, Slope, Slope, Before Position: 0, 1, 2, 3, 4, 5, 6, 7, 8, Sum, After Pos: 0, 1, 2, 3, 4, 5, 6, 7, Sum, EmotionRate");
 		}
@@ -212,11 +214,13 @@ public abstract class Animal implements Steppable {
 		write("Death Rate: " + finalDeathRatePrey + ",");
 		write("Reproduction Rate: " + finalRepRatePrey + ",");
 		write("Learning Outrun Pred: " + predOutranRate + ",");
+		write("Prey Stay: " + preyStay + ",");
 		write("Predator,");
 		write("Predator Total: " + numPredator + ",");
 		write("Death Rate: " + finalDeathRatePredator + ",");
 		write("Reproduction Rate: " + finalRepRatePredator + ",");
 		write("Learning Catch Prey: " + preyCaughtRate + ",");
+		write("Predator Stay: " + predStay + ",");
 		write("Food,");
 		write("Food Total" + ".1" + ",");
 		write("Food Clustered" + "Yes" + ",");
@@ -225,6 +229,10 @@ public abstract class Animal implements Steppable {
 		deathCollectPrey = 0;
 		reproductionCollectPredator = 0;
 		deathCollectPredator = 0;
+		predOutran = 0;
+		preyCaught = 0;
+		preyStay = 0;
+		predStay = 0;
 		
 		
 	}
@@ -562,6 +570,14 @@ public abstract class Animal implements Steppable {
 				}
 				
 		}*/
+		
+			if(prevLoc.x == grid.getObjectLocation(this).x && prevLoc.y == grid.getObjectLocation(this).y)
+			{
+				if(this instanceof Prey)
+					preyStay++;
+				else
+					predStay++;
+			}
 		}
 		
 		//write("New Location: " + grid.getObjectLocation(this));

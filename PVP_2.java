@@ -27,7 +27,7 @@ public class PVP_2 extends SimState{
 	private static int numPrey;
 	//private static double expectationMapDecay;
 	private static int numFood;
-	protected static File dir = new File("runs/run_"+ System.currentTimeMillis()%600);
+	protected static File dir = new File("runs/prey_learning_noClusters" );
 	protected double[][] initialProb = {
 			
 			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}, 
@@ -110,7 +110,7 @@ public class PVP_2 extends SimState{
 			Stoppable stop = schedule.scheduleRepeating(p);
 			p.makeStoppable(stop);
 		}
-			
+		/*	
 			//Expanding on these sets
 			for(int l = 0; l < clusters; l++){
 				
@@ -132,7 +132,7 @@ public class PVP_2 extends SimState{
 				p.makeStoppable(stop);
 				ycord = ycord + 1;
 			} // end of for*/
-		} // end of clusters
+		//} // end of clusters
 
 		for(int i=0; i<numPred; i++)
 		{
