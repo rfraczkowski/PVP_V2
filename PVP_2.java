@@ -27,7 +27,7 @@ public class PVP_2 extends SimState{
 	private static int numPrey;
 	//private static double expectationMapDecay;
 	private static int numFood;
-	protected static File dir = new File("runs/prey_learning_noClusters" );
+	protected static File dir = new File("runs/presentation" );
 	protected double[][] initialProb = {
 			
 			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}, 
@@ -48,7 +48,7 @@ public class PVP_2 extends SimState{
 	public PVP_2(long seed)
 	{
 		super(seed);
-		clusters = 20;
+		clusters = 5;
 		//System.out.println("Grid Area: " + gridArea + " numFood: " + numFood);
 		clust = new int[clusters][2];
 	}
@@ -110,7 +110,7 @@ public class PVP_2 extends SimState{
 			Stoppable stop = schedule.scheduleRepeating(p);
 			p.makeStoppable(stop);
 		}
-		/*	
+			
 			//Expanding on these sets
 			for(int l = 0; l < clusters; l++){
 				
@@ -125,14 +125,38 @@ public class PVP_2 extends SimState{
 				
 				//Placing them at random places around the initial food
 				Food p = new Food();
-				int direction = twister.nextInt(7);
-					
-				world.setObjectLocation(p, xcord, ycord + 1);
-				Stoppable stop = schedule.scheduleRepeating(p);
-				p.makeStoppable(stop);
-				ycord = ycord + 1;
+				int direction = twister.nextInt(3);
+				
+				if(direction == 0)	
+				{
+					world.setObjectLocation(p, world.tx(xcord), world.ty(ycord + 1));
+					Stoppable stop = schedule.scheduleRepeating(p);
+					p.makeStoppable(stop);
+					ycord =world.ty(ycord + 1);
+				}
+				else if(direction == 1)
+				{
+					world.setObjectLocation(p, world.tx(xcord), world.ty(ycord - 1));
+					Stoppable stop = schedule.scheduleRepeating(p);
+					p.makeStoppable(stop);
+					ycord =world.ty(ycord - 1);
+				}
+				else if(direction ==2)
+				{
+					world.setObjectLocation(p, world.tx(xcord + 1), world.ty(ycord));
+					Stoppable stop = schedule.scheduleRepeating(p);
+					p.makeStoppable(stop);
+					xcord =world.tx(xcord + 1);
+				}
+				else
+				{
+					world.setObjectLocation(p, world.tx(xcord - 1), world.ty(ycord));
+					Stoppable stop = schedule.scheduleRepeating(p);
+					p.makeStoppable(stop);
+					xcord =world.tx(xcord - 1);
+				}
 			} // end of for*/
-		//} // end of clusters
+		} // end of clusters
 
 		for(int i=0; i<numPred; i++)
 		{

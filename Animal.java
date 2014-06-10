@@ -765,7 +765,8 @@ public abstract class Animal implements Steppable {
 		for(int j = 0; j < 9; j++)
 		{
 			//Write before positions
-			//write(tempProb[j] + ",");
+			if(this.ID.equals("F0"))
+			write(tempProb[j] + ",");
 			//System.out.print("j:" + tempProb[j] + ",");
 			//if(j != g)
 			//{
@@ -774,7 +775,8 @@ public abstract class Animal implements Steppable {
 		}
 		
 		//Write before position sum
-		//write(sum + ",");
+		if(this.ID.equals("F0"))
+		write(sum + ",");
 		sum -= tempProb[g];
 		//If the increase is not more than the opposite square, adjust increase
 		if(increase < sum && increase <= tempProb[o])
@@ -814,11 +816,12 @@ public abstract class Animal implements Steppable {
 		sum = 0;
 		for(int j = 0; j < 9; j++)
 		{
-			//write(tempProb[j] + ",");
+			if(this.ID.equals("F0"))
+			write(tempProb[j] + ",");
 			sum += tempProb[j];
 		}
-		
-		//write(sum + ",");
+		if(this.ID.equals("F0"))
+		write(sum + ",");
 		
 		
 		actualProb = tempProb;
