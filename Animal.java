@@ -1,5 +1,5 @@
 package sim.app.PVP_V2.src.pvp;
-
+//Class for Animal, Parent Class for Predator and Prey
 
 import java.io.*;
 
@@ -53,15 +53,6 @@ public abstract class Animal implements Steppable {
 	public final static int WEST = 3;
 	public static int numPrey;
 	public static int numPredator;
-	
-	//protected Anger anger = new Anger(this);
-	//protected Sadness sad = new Sadness(this);
-	//protected Disgust dis = new Disgust(this);
-	//protected Fear fear = new Fear(this);
-	//protected Happiness happy = new Happiness(this);
-	//protected Surprise surprise = new Surprise(this);
-	//protected Mood mood = new Mood(anger, sad, dis, fear, happy);
-	
 	protected int reproductionAge;
 	protected static double expectMapDecayRate;
 	protected int velocity = 1;
@@ -96,9 +87,9 @@ public abstract class Animal implements Steppable {
 
 	
 	/**
-		*Purpose: 
-		*Input:
-		*Output:
+		*Purpose: Initializes the Animal Class
+		*Input:Number of predator, number or prey, and the directory to keep output information
+		*Output:None
 	**/
 	protected final static void initialize(int prey, int pred, File directory){
 		numPrey = prey;
@@ -130,17 +121,6 @@ public abstract class Animal implements Steppable {
 		age++;
 		grid = pvp.world;
 		this.move(grid, pvp);
-		/*if(lastMeal >= oldAge)
-		{
-			stop.stop();
-			
-			if(this.getClass().equals(Predator.class))
-				numPredator--;
-			else if (this.getClass().equals(Prey.class))
-				numPrey--;
-			
-			grid.remove(this);
-		}*/
 		
 		//printLP(state);
 		age++;
@@ -154,7 +134,7 @@ public abstract class Animal implements Steppable {
 
 		velocity= 1;
 	
-		 
+		//Updates stats every step
 		if(lastNumPrey > numPrey)
 			deathCollectPrey += (lastNumPrey - numPrey);
 		else if(lastNumPrey < numPrey)
@@ -168,7 +148,10 @@ public abstract class Animal implements Steppable {
 		if(state.schedule.getTime() % interval == 0)
 			printFinalStats(state);
 		
-		//write(state.schedule.getTime() + ", " + numPrey + ", " + numPredator);*/
+		//write(state.schedule.getTime() + ", " + numPrey + ", " + numPredator);
+		
+		//If either all the prey are dead, or all the predator, then stop the simulation
+		// and print the final stats.
 		if(numPrey == 0 || numPredator == 0){
 			write("End of sim,");
 			printFinalStats(state);
@@ -181,7 +164,11 @@ public abstract class Animal implements Steppable {
 	
 	}
 
-	
+	/**
+	 * Purpose: Write the learned probability to the output
+	 * Input: State of the World
+	 * Output: Writes to file/output the amounts of learned probability
+	 **/
 	public void printLP(SimState state)
 	{
 		write("\nTimeStep:" + (int)state.schedule.getTime());
@@ -326,6 +313,7 @@ public abstract class Animal implements Steppable {
 				directChangeTotal++;
 		}
 		
+		/*******************This section is with old direction *********************************/
 		//write("Old Location: " + grid.getObjectLocation(this));
 		//write("Direction: " + direction + "Facing: " + facing);
 		//write("Velocity: " + velocity);
@@ -570,6 +558,7 @@ public abstract class Animal implements Steppable {
 				}
 				
 		}*/
+		/**********************************End of Old Direction **********************************/
 		
 			if(prevLoc.x == grid.getObjectLocation(this).x && prevLoc.y == grid.getObjectLocation(this).y)
 			{
@@ -585,32 +574,32 @@ public abstract class Animal implements Steppable {
 		}
 	
 	/**
-		*Purpose: 
-		*Input:
-		*Output:
+		*Purpose: Abstract method for eat
+		*Input:Object to eat and state of world
+		*Output: None
 	**/
 	protected abstract void eat(Object p, SimState state);
 	
 	/**
-		*Purpose: 
-		*Input:
-		*Output:
+		*Purpose: Abstract method for reproducing
+		*Input:State of world
+		*Output:None
 	**/
 	protected abstract void reproduce(SimState state);
 	
 	/**
-		*Purpose: 
-		*Input:
-		*Output:
+		*Purpose: Sets diseased
+		*Input:Boolean for diseased
+		*Output:None
 	**/
 	protected void setDisease(boolean diseased){
 		isDiseased = diseased;
 	}
 	
 	/**
-		*Purpose: 
-		*Input:
-		*Output:
+		*Purpose: Enum for direction
+		*Input:None
+		*Output:None
 	**/
 	protected enum Direction{
 		NORTH(0), SOUTH(1), EAST(2), WEST(3);
@@ -946,6 +935,12 @@ public abstract class Animal implements Steppable {
 		return new Int2D(x, y);
 	}
 	
+	/**
+	 * Purpose: Writes the string to the output 
+	 * Input: String to be written
+	 * Output: None
+	 * @param out
+	 */
 	protected void write(String out)
 	{
 		try
@@ -959,6 +954,12 @@ public abstract class Animal implements Steppable {
 		}
 	}
 	
+	/**
+	 * Purpose: Appends the string to the output string
+	 * Input: String to be appended
+	 * Output: None
+	 * @param out
+	 */
 	protected void append(String out)
 	{
 		outputString = outputString + "," + out;
