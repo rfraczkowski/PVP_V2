@@ -38,9 +38,36 @@ public class Predator extends Animal implements Steppable{
 	private boolean caught = false;
 
 
-
 	/*
-	 * Constructor
+	 * Constructor for use at start of simulation ONLY
+	 * Input: state of the world, world, and ID number
+	 * Output: None
+	 */
+	Predator(SimState state, int num){
+		
+		direction = state.random.nextInt(3);
+		
+//		oldAge = 20;
+		ID = "F" + num;
+		
+		/******************For writing new files for each predator in testing ***************/
+		//dir.mkdirs();
+		
+		/*
+		try
+		{
+			outputFile = new File(dir, ID + ".csv");
+			writer = new FileWriter(outputFile);
+			write("AgentPosX, AgentPosY, FoodX, FoodY, DeltaX, DeltaY, Direction, Slope, Slope, Before Position: 0, 1, 2, 3, 4, 5, 6, 7, 8, Sum, After Pos: 0, 1, 2, 3, 4, 5, 6, 7, Sum, EmotionRate");
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}*/
+	}
+	
+	/*
+	 * Constructor for creation of a new child
 	 * Input: state of the world, world, and ID number
 	 * Output: None
 	 */
@@ -48,7 +75,7 @@ public class Predator extends Animal implements Steppable{
 		
 		direction = state.random.nextInt(3);
 		
-		oldAge = 20;
+//		oldAge = 20;
 		learnedProb = parentLearn;
 
 		ID = "F" + num;
@@ -254,14 +281,14 @@ public class Predator extends Animal implements Steppable{
 		
 			Prey prey = (Prey) p;
 			assert(prey != null);
-			if(prey.isDiseased()){
-				this.setDisease(true);
-				this.diseaseTimestep = state.schedule.getTime();
-			}
+//			if(prey.isDiseased()){ //prey cannot currently be diseased
+//				this.setDisease(true);
+//				this.diseaseTimestep = state.schedule.getTime();
+//			}
 			caught = true;
 			lastMeal = 0;
 			prey.stop.stop();
-			emotions += eRate;
+//			emotions += eRate;
 			numPrey--;
 			preyCaught++;
 			grid.remove(prey);
@@ -320,7 +347,7 @@ public class Predator extends Animal implements Steppable{
 		double repo = r/repRandNum;
 				
 		assert (r >= 0 && repo >= 0);
-		if(repo <= actualRepRate && age >= repAge && numPredator<=maxPredator)
+		if(repo <= actualRepRate && age >= repAge) //&& numPredator<=maxPredator)
 		{
 			this.reproduce(state);
 			this.lastRep = 0;
