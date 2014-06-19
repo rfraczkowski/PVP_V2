@@ -9,11 +9,11 @@ import sim.util.Int2D;
 public class Food implements Steppable {
 
 	protected double amount = 1000;
-	private double diseasePr = .005;
-	private int diseaseRandNum = 10000;
+//	private double diseasePr = .005;
+//	private int diseaseRandNum = 10000;
 	private double repPr = .0005;
 	private int repRandNum = 10000;
-	private boolean diseased = false;
+//	private boolean diseased = false;
 	private double regrowthRate = .25;
 	public SparseGrid2D grid;
 	protected Stoppable stop;
@@ -21,7 +21,6 @@ public class Food implements Steppable {
 	//Food is an agent, and therefore has a step
 	@Override
 	public void step(SimState state) {
-		// TODO Auto-generated method stub
 		PVP_2 pvp = (PVP_2)state;
 		
 		grid = pvp.world;
@@ -65,10 +64,10 @@ public class Food implements Steppable {
 	/*
 	 * Used for disease
 	 */
-	public boolean isDiseased()
-	{
-		return diseased;
-	}
+//	public boolean isDiseased()
+//	{
+//		return diseased;
+//	}
 
 	/*
 	 * Used for reproduction of food
