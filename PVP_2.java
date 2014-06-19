@@ -23,25 +23,14 @@ public class PVP_2 extends SimState{
 	private static int gridHeight;
 	private static int gridArea = 0;
 	//Rates and Numbers
-	private final static double foodPopRate = .1;
+	private final static double FOOD_POP_RATE = .1;
 	private static int numPred;
 	private static int numPrey;
 	//private static double expectationMapDecay;
 	private static int numFood;
 	protected static File dir; //changed to argument = new File("." ); //runs/presentation changed to current directory
 	protected static String filename; //filename for output, so that it can be used as a parameter
-	protected double[][] initialProb = {
-			
-			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}, 
-			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}, 
-			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
-			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
-			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
-			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
-			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
-			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
-			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}
-	};
+
 	//Number of Clusters
 	private final int clusters;
 	private final int [][] clust;
@@ -61,7 +50,7 @@ public class PVP_2 extends SimState{
 		numPrey = prey;
 		numPred = pred;
 		gridArea = (gridWidth*gridHeight);
-		numFood = (int) (gridArea * foodPopRate);
+		numFood = (int) (gridArea * FOOD_POP_RATE);
 		//expectationMapDecay = exMap;
 	}
 	
@@ -98,7 +87,7 @@ public class PVP_2 extends SimState{
 
 		for(int i=0; i<numPred; i++)
 		{
-			Predator p = new Predator(this, world, i, initialProb);
+			Predator p = new Predator(this, i);
 			
 			//Torodial random locations
 			MutableInt2D loc2 = new MutableInt2D();
@@ -115,7 +104,7 @@ public class PVP_2 extends SimState{
 		
 		for(int j=0; j<numPrey; j++)
 		{
-			Prey prey = new Prey(this, world, j, initialProb);
+			Prey prey = new Prey(this, j);
 			
 			//Torodial random locations
 			MutableInt2D loc3 = new MutableInt2D();
@@ -214,19 +203,20 @@ public class PVP_2 extends SimState{
 		//Number of Prey and Predator
 		numPrey = Integer.parseInt(args[++p]);
 		numPred = Integer.parseInt(args[++p]);
+		numFood = Integer.parseInt(args[++p]);
 		//Expectation Decay Rate
 //		expectationMapDecay = Double.parseDouble(args[++p]);
 		
 		//Prey Only Parameters
 		int preyMaxHunger = Integer.parseInt(args[++p]);
-		int preyOldAge = Integer.parseInt(args[++p]);
+		//int preyOldAge = Integer.parseInt(args[++p]);
 		double preyDeathRate = Double.parseDouble(args[++p]);
 		int preyDeathRandNum = Integer.parseInt(args[++p]);
-		double preyAgingDeathMod = Double.parseDouble(args[++p]);
-		double preyHungerDeathMod = Double.parseDouble(args[++p]);
-		int preyLastMealLow = Integer.parseInt(args[++p]);
+		//double preyAgingDeathMod = Double.parseDouble(args[++p]);
+		//double preyHungerDeathMod = Double.parseDouble(args[++p]);
+		//int preyLastMealLow = Integer.parseInt(args[++p]);
 		int preyLastMealMed = Integer.parseInt(args[++p]);
-		int preyLastMealHigh = Integer.parseInt(args[++p]);
+		//int preyLastMealHigh = Integer.parseInt(args[++p]);
 		int preyRepAge = Integer.parseInt(args[++p]);
 		double preyDefaultRepRate = Double.parseDouble(args[++p]);
 		int preyRepRandNum = Integer.parseInt(args[++p]);
@@ -234,25 +224,25 @@ public class PVP_2 extends SimState{
 		
 		// Predator Only Parameters
 		int predMaxHunger = Integer.parseInt(args[++p]);
-		int predOldAge = Integer.parseInt(args[++p]);
+		//int predOldAge = Integer.parseInt(args[++p]);
 		double predDeathRate = Double.parseDouble(args[++p]);
 		int predDeathRandNum = Integer.parseInt(args[++p]);
-		double predAgingDeathMod = Double.parseDouble(args[++p]);
-		double predHungerDeathMod = Double.parseDouble(args[++p]);
-		int predLastMealLow = Integer.parseInt(args[++p]);
+		//double predAgingDeathMod = Double.parseDouble(args[++p]);
+		//double predHungerDeathMod = Double.parseDouble(args[++p]);
+		//int predLastMealLow = Integer.parseInt(args[++p]);
 		int predLastMealMed = Integer.parseInt(args[++p]);
-		int predLastMealHigh = Integer.parseInt(args[++p]);
+		//int predLastMealHigh = Integer.parseInt(args[++p]);
 		int predRepAge = Integer.parseInt(args[++p]);
 		double predDefaultRepRate = Double.parseDouble(args[++p]);
 		int predRepRandNum = Integer.parseInt(args[++p]);
 		
-		Prey.initializePrey(preyMaxHunger, preyOldAge, preyDeathRate, preyDeathRandNum, preyAgingDeathMod,
-				preyHungerDeathMod, preyLastMealLow, preyLastMealMed, preyLastMealHigh, preyRepAge,
-				preyDefaultRepRate, preyRepRandNum);
-		
-		Predator.initializePred(predMaxHunger, predOldAge, predDeathRate, predDeathRandNum, predAgingDeathMod,
-				predHungerDeathMod, predLastMealLow, predLastMealMed, predLastMealHigh, predRepAge,
-				predDefaultRepRate, predRepRandNum);
+//		Prey.initializePrey(preyMaxHunger, preyOldAge, preyDeathRate, preyDeathRandNum, preyAgingDeathMod,
+//				preyHungerDeathMod, preyLastMealLow, preyLastMealMed, preyLastMealHigh, preyRepAge,
+//				preyDefaultRepRate, preyRepRandNum);
+//		
+//		Predator.initializePred(predMaxHunger, predOldAge, predDeathRate, predDeathRandNum, predAgingDeathMod,
+//				predHungerDeathMod, predLastMealLow, predLastMealMed, predLastMealHigh, predRepAge,
+//				predDefaultRepRate, predRepRandNum);
 
 		
 		doLoop(PVP_2.class, args);
