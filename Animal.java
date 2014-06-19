@@ -15,8 +15,8 @@ public abstract class Animal implements Steppable {
 	protected SparseGrid2D grid;
 	protected boolean isDiseased = false;
 	protected static FileWriter writer;
-	protected static File outputFile;
-	protected static File dir;
+	//protected static File outputFile;
+	//protected static File dir;
 	protected String outputString = "";
 
 	protected double mood = 0.0;
@@ -91,14 +91,14 @@ public abstract class Animal implements Steppable {
 		*Input:Number of predator, number or prey, and the directory to keep output information
 		*Output:None
 	**/
-	protected final static void initialize(int prey, int pred, File directory){
+	protected final static void initialize(int prey, int pred, File directory, String filename){
 		numPrey = prey;
 		numPredator = pred;
-		dir = directory;
+		//dir = directory;
 		try
 		{
-			dir.mkdir();
-			outputFile = new File(dir, "run_" + System.currentTimeMillis()%600 + ".csv");
+			directory.mkdir();
+			File outputFile = new File(directory, filename + ".csv");//"run_" + System.currentTimeMillis()%600 + ".csv");
 			writer = new FileWriter(outputFile);
 			//write("AgentPosX, AgentPosY, FoodX, FoodY, DeltaX, DeltaY, Direction, Slope, Slope, Before Position: 0, 1, 2, 3, 4, 5, 6, 7, 8, Sum, After Pos: 0, 1, 2, 3, 4, 5, 6, 7, Sum, EmotionRate");
 		}
@@ -109,13 +109,12 @@ public abstract class Animal implements Steppable {
 	}
 	
 	/**
-		*Purpose: A Step in the agent system	
+		*Purpose: A Step in the agent system, called by each predator/prey at start of their own step	
 		*Input:The state of the world SimState
 		*Output:One agent turn, linked to MASON visualization
 	**/
 	@Override
 	public void step(SimState state) {
-		// TODO Auto-generated method stub
 		//PVPEmo pvp = (PVPEmo)state;
 		PVP_2 pvp = (PVP_2)state;
 		age++;
@@ -630,12 +629,13 @@ public abstract class Animal implements Steppable {
 		
 		int slope = deltaX + deltaY;
 		
+		assert(Math.abs(slope) <=2);
 		//write("DeltaX =" + deltaX);
 		//write(" DeltaY  = " + deltaY);
 		//write(slope + ",");
 		
-		if(Math.abs(slope) > 48)
-			return;
+	//	if(Math.abs(slope) > 48) //currently unnecessary
+	//		return;
 		
 		//Index Positions
 		/*
@@ -644,23 +644,20 @@ public abstract class Animal implements Steppable {
 		 *  6 - 7 - 8
 		 */
 		
+		//Finding the goal and its opposite based on the slope
 		if(slope == 0)
 		{
 			//If new Loc is upper right POSITION INDEX 2
 			if(deltaX == -1)
 			{
 				g = 2;
-				
 				o = 6;
-				
-				
 			}
 			//Goal is lower left POSITION INDEX 5
 			else if(deltaX == 1)
 			{
 				g = 6;
 				o = 2;
-				
 				//Lower reward
 			}
 			else
@@ -670,7 +667,6 @@ public abstract class Animal implements Steppable {
 				o = pvp.random.nextInt(8);
 				
 				//High reward
-				
 			}
 		}
 		else if(slope == 1)
@@ -680,14 +676,12 @@ public abstract class Animal implements Steppable {
 			{
 				g = 1;
 				o = 7;
-	
 			}
 			//Goal is direct to left POSITION INDEX 3
 			else
 			{
 				g = 3;
 				o = 5;
-				
 			}
 		}
 		else if(slope == -1)
@@ -701,7 +695,6 @@ public abstract class Animal implements Steppable {
 			//Goal is directly to right
 			else
 			{
-				
 				g = 5;
 				o = 3;
 			}
@@ -711,7 +704,6 @@ public abstract class Animal implements Steppable {
 		{
 			g = 0;
 			o = 8;
-			
 		}
 		//Goal is lower right
 		else
@@ -723,12 +715,39 @@ public abstract class Animal implements Steppable {
 		
 		/******************INCREASE GOAL *************************/
 		tempProb = learnedProb[g];
+		double increase = calculateGoalIncrease(tempProb[g], isLow);
+				
+		/****************ADJUST OTHERS *********************/
+		
+		adjustRewardProbabilities(pvp, increase, tempProb, g, o);
+		
+		//OLSEN -- is all of this just for output? Or is it doing something? What is the point of the if statement?
+		double sum = 0;
+		for(int j = 0; j < 9; j++)
+		{
+			if(this.ID.equals("F0"))
+				write(tempProb[j] + ",");
+			sum += tempProb[j];
+		}
+		if(this.ID.equals("F0"))
+			write(sum + ",");
+		
+		actualProb = tempProb;
+	}
+	
+	/**
+	 * Purpose: Makes the changes to movement probabilities
+	 * @param tempProb the movement probabilities for all neighbors
+	 * @param isLow whether or not the effect should be low?
+	 * @return double the amount to increase the goal probability
+	 */
+	private double calculateGoalIncrease(double goal_prob, boolean isLow)
+	{
 		double increase;
-		double decrease;
 		if(isLow)
 		{
 			
-			increase = tempProb[g]*.10;
+			increase = goal_prob*.10;
 			increase = Math.round(increase);
 			
 			
@@ -739,7 +758,7 @@ public abstract class Animal implements Steppable {
 		}
 		else
 		{
-			increase = tempProb[g]*.25;
+			increase = goal_prob*.25;
 			increase = Math.round(increase);
 			
 			//write("Goal: " + actualProb[g]);
@@ -747,10 +766,19 @@ public abstract class Animal implements Steppable {
 			//write("Opposite: " + actualProb[o]);
 			//write("New Opp Prob: " + decrease);
 		}
-		
-		/****************ADJUST OTHERS *********************/
-		
-		double sum = 0;
+		return increase;
+	}
+	/**
+	 * Purpose: Makes the changes to movement probabilities
+	 * @param pvp the current state of the simulation
+	 * @param increase the amount by which the goal increases and the opposite decreases
+	 * @param tempProb the movement probabilities for all neighbors
+	 * @param goal the location of the goal
+	 * @param opp the location opposite of the goal
+	 */
+	private void adjustRewardProbabilities(SimState pvp, double increase, double[] tempProb, int goal, int opp)
+	{
+		double sum = 0; //OLSEN -- what is the point of this variable? It appears to be used to add up all probabilities for movement
 		for(int j = 0; j < 9; j++)
 		{
 			//Write before positions
@@ -765,16 +793,17 @@ public abstract class Animal implements Steppable {
 		
 		//Write before position sum
 		if(this.ID.equals("F0"))
-		write(sum + ",");
-		sum -= tempProb[g];
+			write(sum + ",");
+		sum -= tempProb[goal];
+		
 		//If the increase is not more than the opposite square, adjust increase
-		if(increase < sum && increase <= tempProb[o])
+		if(increase < sum && increase <= tempProb[opp])
 		{
-			tempProb[g] += increase;
-			tempProb[o] -= increase;
+			tempProb[goal] += increase;
+			tempProb[opp] -= increase;
 			//write(", Normal Scenario");
 		}
-		else if(increase < sum && increase > tempProb[o])
+		else if(increase < sum && increase > tempProb[opp])
 		{
 			int newIndex = pvp.random.nextInt(8);
 			
@@ -782,7 +811,7 @@ public abstract class Animal implements Steppable {
 			
 			if(tempProb[newIndex] >= increase)
 			{
-				tempProb[g] += increase;
+				tempProb[goal] += increase;
 				tempProb[newIndex] -= increase;
 			}
 			else if(sum >= increase)
@@ -791,29 +820,13 @@ public abstract class Animal implements Steppable {
 				double newP = sum/8;
 				for(int i = 0; i < 9; i++)
 				{
-					if(i != g)
+					if(i != goal)
 						tempProb[i] = newP;
 				}
 			}
-			
-		
 			//System.out.println();
 			//write(", Opposite Prob is all wiped out");
 		}
-		
-		
-		sum = 0;
-		for(int j = 0; j < 9; j++)
-		{
-			if(this.ID.equals("F0"))
-			write(tempProb[j] + ",");
-			sum += tempProb[j];
-		}
-		if(this.ID.equals("F0"))
-		write(sum + ",");
-		
-		
-		actualProb = tempProb;
 	}
 	/**
 	 * Purpose: Sets up the movement preference for the animal
@@ -939,7 +952,7 @@ public abstract class Animal implements Steppable {
 	 * Purpose: Writes the string to the output 
 	 * Input: String to be written
 	 * Output: None
-	 * @param out
+	 * @param out the string to be output
 	 */
 	protected void write(String out)
 	{
@@ -958,11 +971,11 @@ public abstract class Animal implements Steppable {
 	 * Purpose: Appends the string to the output string
 	 * Input: String to be appended
 	 * Output: None
-	 * @param out
+	 * @param out the value to be appended to the data member outputString
 	 */
 	protected void append(String out)
 	{
 		outputString = outputString + "," + out;
 	}
 
-	}
+}

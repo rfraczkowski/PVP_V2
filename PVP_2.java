@@ -13,6 +13,7 @@ import sim.field.grid.*;
 import ec.util.*;
 
 
+@SuppressWarnings("serial")
 public class PVP_2 extends SimState{
 
 	//world
@@ -27,7 +28,8 @@ public class PVP_2 extends SimState{
 	private static int numPrey;
 	//private static double expectationMapDecay;
 	private static int numFood;
-	protected static File dir = new File("runs/presentation" );
+	protected static File dir; //changed to argument = new File("." ); //runs/presentation changed to current directory
+	protected static String filename; //filename for output, so that it can be used as a parameter
 	protected double[][] initialProb = {
 			
 			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}, 
@@ -69,7 +71,7 @@ public class PVP_2 extends SimState{
 		super.start();
 		world = new SparseGrid2D(gridWidth, gridHeight);
 		//grid.clear();
-		Animal.initialize(numPrey, numPred, dir);
+		Animal.initialize(numPrey, numPred, dir, filename);
 		//ONLY RANDOM NUMBER GENERATOR
 		MersenneTwisterFast twister = new MersenneTwisterFast();
 		
@@ -92,6 +94,44 @@ public class PVP_2 extends SimState{
 		} // end of for
 		//System.out.println("Clusters: " + clusters);
 		
+		createClusters(twister);
+
+		for(int i=0; i<numPred; i++)
+		{
+			Predator p = new Predator(this, world, i, initialProb);
+			
+			//Torodial random locations
+			MutableInt2D loc2 = new MutableInt2D();
+			loc2.x = world.tx(twister.nextInt());
+			loc2.y = world.ty(twister.nextInt());
+			
+			//System.out.println("loc x : " + loc.x + " loc.y: " + loc.y);
+			world.setObjectLocation(p, new Int2D(loc2.x,loc2.y));
+			Stoppable stop = schedule.scheduleRepeating(p);
+			p.makeStoppable(stop);
+			//System.out.println(world.getObjectLocation(p));
+			
+		}
+		
+		for(int j=0; j<numPrey; j++)
+		{
+			Prey prey = new Prey(this, world, j, initialProb);
+			
+			//Torodial random locations
+			MutableInt2D loc3 = new MutableInt2D();
+			loc3.x = world.tx(twister.nextInt());
+			loc3.y = world.ty(twister.nextInt());
+			
+			world.setObjectLocation(prey, new Int2D(loc3.x, loc3.y));
+			Stoppable stop = schedule.scheduleRepeating(prey);
+			prey.makeStoppable(stop);
+			
+			//System.out.println(world.getObjectLocation(prey));
+		}
+	}
+	
+	public void createClusters(MersenneTwisterFast twister)
+	{
 		//Clustered Visual Food - FIRST SET
 		for(int h = 0; h < clusters; h++){
 			
@@ -111,8 +151,8 @@ public class PVP_2 extends SimState{
 			p.makeStoppable(stop);
 		}
 			
-			//Expanding on these sets
-			for(int l = 0; l < clusters; l++){
+		//Expanding on these sets
+		for(int l = 0; l < clusters; l++){
 				
 			//System.out.println("Cluster: " + l);
 				
@@ -157,93 +197,62 @@ public class PVP_2 extends SimState{
 				}
 			} // end of for*/
 		} // end of clusters
-
-		for(int i=0; i<numPred; i++)
-		{
-			Predator p = new Predator(this, world, i, initialProb);
-			
-			//Torodial random locations
-			MutableInt2D loc2 = new MutableInt2D();
-			loc2.x = world.tx(twister.nextInt());
-			loc2.y = world.ty(twister.nextInt());
-			
-			//System.out.println("loc x : " + loc.x + " loc.y: " + loc.y);
-			world.setObjectLocation(p, new Int2D(loc2.x,loc2.y));
-			Stoppable stop = schedule.scheduleRepeating(p);
-			p.makeStoppable(stop);
-			//System.out.println(world.getObjectLocation(p));
-			
-		}
-		
-		for(int j=0; j<numPrey; j++)
-		{
-			Prey prey = new Prey(this, world, j, initialProb);
-			
-			//Torodial random locations
-			MutableInt2D loc3 = new MutableInt2D();
-			loc3.x = world.tx(twister.nextInt());
-			loc3.y = world.ty(twister.nextInt());
-			
-			world.setObjectLocation(prey, new Int2D(loc3.x, loc3.y));
-			Stoppable stop = schedule.scheduleRepeating(prey);
-			prey.makeStoppable(stop);
-			
-			//System.out.println(world.getObjectLocation(prey));
-		}
 	}
-	
 	/**
 	 * Runs the simulation using the built in "doLoop" that steps through scheduled agents.
 	 * @param args
 	 */
 	public static void main(String[] args)
 	{
-
+		short p = -1; //count of which parameter is being input, so it's easy to modify this list
 		//Parameters get assigned here
+		dir = new File(args[++p]);
+		filename = args[++p];
 		//World size
-		/*gridWidth = Integer.parseInt(args[0]);
-		gridHeight = Integer.parseInt(args[1]);
+		//gridWidth = Integer.parseInt(args[++p]);
+		//gridHeight = Integer.parseInt(args[++p]);
 		//Number of Prey and Predator
-		numPrey = Integer.parseInt(args[2]);
-		numPred = Integer.parseInt(args[3]);
+		numPrey = Integer.parseInt(args[++p]);
+		numPred = Integer.parseInt(args[++p]);
 		//Expectation Decay Rate
-		expectationMapDecay = Double.parseDouble(args[4]);
+//		expectationMapDecay = Double.parseDouble(args[++p]);
+		
 		//Prey Only Parameters
-		int preyMaxHunger = Integer.parseInt(args[5]);
-		int preyOldAge = Integer.parseInt(args[6]);
-		double preyDeathRate = Double.parseDouble(args[7]);
-		int preyDeathRandNum = Integer.parseInt(args[8]);
-		double preyAgingDeathMod = Double.parseDouble(args[9]);
-		double preyHungerDeathMod = Double.parseDouble(args[10]);
-		int preyLastMealLow = Integer.parseInt(args[11]);
-		int preyLastMealMed = Integer.parseInt(args[12]);
-		int preyLastMealHigh = Integer.parseInt(args[13]);
-		int preyRepAge = Integer.parseInt(args[14]);
-		double preyDefaultRepRate = Double.parseDouble(args[15]);
-		int preyRepRandNum = Integer.parseInt(args[16]);
+		int preyMaxHunger = Integer.parseInt(args[++p]);
+		int preyOldAge = Integer.parseInt(args[++p]);
+		double preyDeathRate = Double.parseDouble(args[++p]);
+		int preyDeathRandNum = Integer.parseInt(args[++p]);
+		double preyAgingDeathMod = Double.parseDouble(args[++p]);
+		double preyHungerDeathMod = Double.parseDouble(args[++p]);
+		int preyLastMealLow = Integer.parseInt(args[++p]);
+		int preyLastMealMed = Integer.parseInt(args[++p]);
+		int preyLastMealHigh = Integer.parseInt(args[++p]);
+		int preyRepAge = Integer.parseInt(args[++p]);
+		double preyDefaultRepRate = Double.parseDouble(args[++p]);
+		int preyRepRandNum = Integer.parseInt(args[++p]);
 		
 		
 		// Predator Only Parameters
-		int predMaxHunger = Integer.parseInt(args[17]);
-		int predOldAge = Integer.parseInt(args[18]);
-		double predDeathRate = Double.parseDouble(args[19]);
-		int predDeathRandNum = Integer.parseInt(args[20]);
-		double predAgingDeathMod = Double.parseDouble(args[21]);
-		double predHungerDeathMod = Double.parseDouble(args[22]);
-		int predLastMealLow = Integer.parseInt(args[23]);
-		int predLastMealMed = Integer.parseInt(args[24]);
-		int predLastMealHigh = Integer.parseInt(args[25]);
-		int predRepAge = Integer.parseInt(args[26]);
-		double predDefaultRepRate = Double.parseDouble(args[27]);
-		int predRepRandNum = Integer.parseInt(args[28]);
-		*/
-		/*Prey.initializePrey(preyMaxHunger, preyOldAge, preyDeathRate, preyDeathRandNum, preyAgingDeathMod,
+		int predMaxHunger = Integer.parseInt(args[++p]);
+		int predOldAge = Integer.parseInt(args[++p]);
+		double predDeathRate = Double.parseDouble(args[++p]);
+		int predDeathRandNum = Integer.parseInt(args[++p]);
+		double predAgingDeathMod = Double.parseDouble(args[++p]);
+		double predHungerDeathMod = Double.parseDouble(args[++p]);
+		int predLastMealLow = Integer.parseInt(args[++p]);
+		int predLastMealMed = Integer.parseInt(args[++p]);
+		int predLastMealHigh = Integer.parseInt(args[++p]);
+		int predRepAge = Integer.parseInt(args[++p]);
+		double predDefaultRepRate = Double.parseDouble(args[++p]);
+		int predRepRandNum = Integer.parseInt(args[++p]);
+		
+		Prey.initializePrey(preyMaxHunger, preyOldAge, preyDeathRate, preyDeathRandNum, preyAgingDeathMod,
 				preyHungerDeathMod, preyLastMealLow, preyLastMealMed, preyLastMealHigh, preyRepAge,
 				preyDefaultRepRate, preyRepRandNum);
 		
 		Predator.initializePred(predMaxHunger, predOldAge, predDeathRate, predDeathRandNum, predAgingDeathMod,
 				predHungerDeathMod, predLastMealLow, predLastMealMed, predLastMealHigh, predRepAge,
-				predDefaultRepRate, predRepRandNum);*/
+				predDefaultRepRate, predRepRandNum);
 
 		
 		doLoop(PVP_2.class, args);

@@ -33,7 +33,7 @@ public class Predator extends Animal implements Steppable{
 	protected int eatingChance;
 	private static double actualRepRate;
 	private static double defaultRepRate = .1;
-	private Bag seen;
+	//private Bag seen;
 	protected double diseaseRecovery = .25;
 	private boolean caught = false;
 
@@ -46,15 +46,7 @@ public class Predator extends Animal implements Steppable{
 	 */
 	Predator(SimState state, SparseGrid2D grid, int num, double[][] parentLearn){
 		
-		int directionNum= state.random.nextInt(3);
-		if(directionNum == 0)
-			direction = 0;
-		else if(directionNum == 1)
-			direction = 1;
-		else if (directionNum == 2)
-			direction = 2;
-		else
-			direction = 3;
+		direction = state.random.nextInt(3);
 		
 		oldAge = 20;
 		learnedProb = parentLearn;
@@ -79,7 +71,8 @@ public class Predator extends Animal implements Steppable{
 
 	/*
 	 * Purpose: Initializes predator given set of parameters 
-	 * Input: Parameters
+	 * Input: maxhunger, oldage, defaultdeathrate, deathrandnum, agingDeathMod, hungerDeathMod, lastMealLow, 
+	 * 			lastMealMed, lastMealHigh, repAge, defaultRepRate, defaultRepRandNum
 	 * Output:None
 	 */
 	protected final static void initializePred(int maxH, int old,
@@ -119,11 +112,10 @@ public class Predator extends Animal implements Steppable{
 	@Override
 	public void step(SimState state) 
 	{
-		// TODO Auto-generated method stub
 		super.step(state);
 		
 		//Boolean to see if caught prey
-		caught = false;
+		caught = false; //Default at start of each step is false, eat method updates if it is caught
 		
 		/* //Chance of Disease recovery
 		 if(this.isDiseased && ((state.schedule.getTime() - diseaseTimestep) > lastMealLow)){
@@ -143,32 +135,32 @@ public class Predator extends Animal implements Steppable{
 		
 		//Empty bags to be filled with objects 
 		Int2D cord = grid.getObjectLocation(this);
-		Bag result = new Bag();
+		Bag neighbors = new Bag();
 		IntBag xPos = new IntBag();
 		IntBag yPos = new IntBag();
 		
 		//Get moore neighbors of the predators and fill them in appropriate bags
-		grid.getMooreNeighbors(cord.x, cord.y, 1, Grid2D.TOROIDAL, result, xPos, yPos);
+		grid.getMooreNeighbors(cord.x, cord.y, 1, Grid2D.TOROIDAL, neighbors, xPos, yPos);
 		
 		//Used to determine first prey ever seen
 		boolean first = true;
 		
 		//Iterates through all the objects, determines finds the first prey
 		//seen, then updates movement based on that probability.
-		for(int i = 0; i < result.numObjs; i++)
+		for(int i = 0; i < neighbors.numObjs; i++)
 		{
-			Object temp = result.get(i);
+			Object temp = neighbors.get(i);
 			//write("Result: " + temp);
 			
-			if(temp instanceof Prey && first == true){
+			if(temp instanceof Prey && first){
 				
 				//write("Found Food! : ");
 				Int2D prey = grid.getObjectLocation(temp);
 				//write(prey.x + "," + prey.y + ",");
-				int deltaX = prey.x - cord.x;
-				int deltaY = prey.y - cord.y;
+				//int deltaX = prey.x - cord.x;
+				//int deltaY = prey.y - cord.y;
 				
-				int direction = deltaX + deltaY;
+				//int direction = deltaX + deltaY;
 				//write(deltaX + "," + deltaY + ",");
 				
 				//write(direction + ",");
@@ -198,7 +190,7 @@ public class Predator extends Animal implements Steppable{
 		
 		//Reproduction Calculations -- sees if predator will reproduce this timestep,
 		//reproduces the predator if so
-		else if(this.iReproduce(state))
+		if(this.iReproduce(state))
 		{
 			return;
 		}
@@ -281,7 +273,7 @@ public class Predator extends Animal implements Steppable{
 	
 	
 	/*
-	 * Purpose: Method that "kills" the Predator by removing it from the grid based on factors
+	 * Purpose: Method that "kills" the Predator by removing it from the grid if probability determines it should die
 	 * Input: State of World
 	 * Side Effect: Death of predator
 	 */
