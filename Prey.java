@@ -16,44 +16,67 @@ public class Prey extends Animal implements Steppable{
 
 	//Constants from summer not all are used. 
 	private static final long serialVersionUID = 1L;
+	
+	//static data members
 	private static double defaultDeathRate;
-	private double actualDeathRate;
 	private static int deathRandNum = 1000;
-	private static double agingDeathMod;
-	private static double hungerDeathMod = .05;
-	private static int lastMealLow = 15;
-	private static int lastMealMed;
-	private static int lastMealHigh;
-	private static double foodReduction = .9;
-	protected static int repRandNum = 1000;
-	protected int eatingChance;
-	protected boolean predSeen = false;
-	private static int repAge;
+//	private static double agingDeathMod;
+	private static double hungerDeathMod = .05; //the increase to death likelihood based on hunger
+	private static int repAge;//the age at which reproduction is possible
 	private static double defaultRepRate = .20;
 	private static double actualRepRate;
+	private static int lastMealLow = 15;
+//	private static int lastMealMed;
+//	private static int lastMealHigh;
+	private static double foodReduction = .9; //the amount by which food decreases when eaten
+	protected static int repRandNum = 1000;
+	
+	//non-static data members
+	private double actualDeathRate;
+	protected int eatingChance;
+	protected boolean predSeen = false;
 	private Bag seen;
 	protected double diseaseRecovery = .25;
 
 	/*
-	 * Purpose: Constructor
+	 * Purpose: Constructor for use at beginning of simulation ONLY
 	 * Input: State of the world, world, and its assigned ID
+	 */
+	Prey(SimState state, int num)
+	{
+	
+		direction = state.random.nextInt(3);
+		
+//		oldAge = 10;
+		ID = "R" + num;
+		
+		/***************Makes separate files for each prey agent**************************************/
+		/*dir.mkdirs();
+		
+		try
+		{
+			outputFile = new File(dir, ID + ".csv");
+			
+			writer = new FileWriter(outputFile);
+			write("AgentPosX, AgentPosY, FoodX, FoodY, DeltaX, DeltaY, Direction, Slope, Slope, Before Position: 0, 1, 2, 3, 4, 5, 6, 7, 8, Sum, After Pos: 0, 1, 2, 3, 4, 5, 6, 7, Sum, EmotionRate");
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
+		//eatingChance = 1;*/
+	}
+	
+	/*
+	 * Purpose: Constructor for creation of a child
+	 * Input: State of the world, world, assigned ID, parent's learned probabilities
 	 */
 	Prey(SimState state, SparseGrid2D grid, int num, double[][] parentLearn)
 	{
 	
-		int directionNum= state.random.nextInt(3);
+		direction = state.random.nextInt(3);
 		
-		//Still sets direction, even though not used
-		if(directionNum == 0)
-			direction = 0;
-		else if(directionNum == 1)
-			direction = 1;
-		else if (directionNum == 2)
-			direction = 2;
-		else
-			direction = 3;
-		
-		oldAge = 10;
+//		oldAge = 10;
 		learnedProb = parentLearn;
 		ID = "R" + num;
 		
@@ -87,11 +110,11 @@ public class Prey extends Animal implements Steppable{
 		//oldAge = old;
 		defaultDeathRate = dR;
 		deathRandNum = dRN;
-		agingDeathMod = agDM;
+	//	agingDeathMod = agDM;
 		hungerDeathMod = hDM;
 		lastMealLow = lmL;
-		lastMealMed = lmM;
-		lastMealHigh = lmH;
+	//	lastMealMed = lmM;
+	//	lastMealHigh = lmH;
 		repAge = rA;
 		defaultRepRate = dRR;
 		repRandNum = rRN;
@@ -305,16 +328,6 @@ public class Prey extends Animal implements Steppable{
 	}
 	
 	/*
-	 * Purpose: Sets The animal as diseased
-	 * Input: boolean of whether diseased or not
-	 * Output: None
-	 */
-	public void setDiseased(boolean dis)
-	{
-		isDiseased = dis;
-	}
-	
-	/*
 	 * Purpose: Reproduces new prey
 	 * Input: State of world
 	 * Side Effects: New Prey with learned Probability
@@ -329,15 +342,6 @@ public class Prey extends Animal implements Steppable{
 		p.makeStoppable(stop);
 	}
 	
-	/*
-	 * Purpose: Returns whether or not the animal is diseased
-	 * Input: None
-	 * Output: Boolean of whether it is diseased
-	 */
-	public boolean isDiseased(){
-		return isDiseased;
-	}
-
 	/*	Chance of death for the animal
 	 * Input: SimState
 	 * Output: None
@@ -383,5 +387,14 @@ public class Prey extends Animal implements Steppable{
 			}
 		return false;
 	}
-
+	/*
+	 * Purpose: mutator for setting the last meal rate
+	 * @param int the value to set lastMealLow to hold
+	 */
+	public static void setLastMealLow(int i)
+	{
+		lastMealLow = i;
+	}
 }
+
+
