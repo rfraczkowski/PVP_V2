@@ -13,19 +13,14 @@ import sim.util.Int2D;
 public abstract class Animal implements Steppable {
 
 	protected SparseGrid2D grid;
-	protected boolean isDiseased = false;
+//	protected boolean isDiseased = false;
 	protected static FileWriter writer;
-	//protected static File outputFile;
-	//protected static File dir;
 	protected String outputString = "";
 
-	protected double mood = 0.0;
-	protected double emotions = 0.0;
-	protected double eRate = .1;
 	protected static int preyStay = 0;
 	protected static int predStay = 0;
 	protected int age = 0;
-	protected int oldAge; 
+//	protected int oldAge; 
 	protected int direction;
 	protected int lastMeal = 0;
 	static double interval = 500;
@@ -42,7 +37,7 @@ public abstract class Animal implements Steppable {
 			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
 			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}
 	};
-	protected double[] learnedMov = actualProb;
+	//protected double[] learnedMov = actualProb;
 	//Arrays for remembering policy
 	protected double[] upLeft = {};
 	protected double[] up = {};
@@ -53,38 +48,47 @@ public abstract class Animal implements Steppable {
 	public final static int WEST = 3;
 	public static int numPrey;
 	public static int numPredator;
-	protected int reproductionAge;
-	protected static double expectMapDecayRate;
+//	protected int reproductionAge;
+
 	protected int velocity = 1;
 	//protected BehaviorProcessor behavior;
 	//protected VisualProcessor vP;
 	protected Stoppable stop;
-	//protected ExpectationMap map;
+
 	protected static int maxHunger;
 	protected static int lastNumPrey = 0;
 	protected int lastNumPredator = 0;
-	protected int lastSeenPredator;
+//	protected int lastSeenPredator;
+	
+	/* below values are used for statistics */
 	protected static int deathCollectPrey;
 	protected static int deathCollectPredator;
 	protected static int reproductionCollectPrey;
 	protected static int reproductionCollectPredator;
-	protected int lastSeenPrey;
-	protected int maxSeenPredator;
 	protected static int preyCaught = 0;
 	protected static int predOutran = 0;
+	
+//	protected int lastSeenPrey;
+//	protected int maxSeenPredator;
 	protected int lastRep;
 	protected int maxRep;
-	protected static int maxSocial;
-	protected static int maxPrey = 300;
-	protected static int maxPredator = 300;
-	protected int lastSocial = 0;
+//	protected static int maxSocial;
+//	protected int lastSocial = 0;
+//	protected static int maxPrey = 300;
+//	protected static int maxPredator = 300;
 	protected int directChangeTotal = 0;
 	protected String ID;
 	protected Bag allObjects = new Bag();
-	protected double diseaseTimestep;
-	protected int diseaseRandomNum = 100;
+//	protected double diseaseTimestep;
+//	protected int diseaseRandomNum = 100;
 	protected Int2D prevLoc;
 
+	/* emotion related data members */
+	//protected ExpectationMap map;
+//	protected static double expectMapDecayRate;
+//	protected double mood = 0.0;
+//	protected double emotions = 0.0;
+//	protected double eRate = .1;
 	
 	/**
 		*Purpose: Initializes the Animal Class
@@ -124,11 +128,13 @@ public abstract class Animal implements Steppable {
 		//printLP(state);
 		age++;
 		lastMeal++;
-		lastSocial++;
 		lastRep++;
-		lastSeenPrey++;
-		lastSeenPredator++;
-		maxSeenPredator = 30;
+
+		//below data members are not currently in use
+//		lastSeenPrey++;
+//		lastSocial++;
+//		lastSeenPredator++;
+//		maxSeenPredator = 30;
 		//Start of every step uses default movement
 
 		velocity= 1;
@@ -591,24 +597,32 @@ public abstract class Animal implements Steppable {
 		*Input:Boolean for diseased
 		*Output:None
 	**/
-	protected void setDisease(boolean diseased){
-		isDiseased = diseased;
-	}
+//	protected void setDisease(boolean diseased){
+//		isDiseased = diseased;
+//	}
 	
+	/*
+	 * Purpose: Returns whether or not the animal is diseased
+	 * Input: None
+	 * Output: Boolean of whether it is diseased
+	 */
+//	public boolean isDiseased(){
+//		return isDiseased;
+//	}
 	/**
 		*Purpose: Enum for direction
 		*Input:None
 		*Output:None
 	**/
-	protected enum Direction{
-		NORTH(0), SOUTH(1), EAST(2), WEST(3);
-		
-		private int value;
-		
-		private Direction(int value){
-			this.value = value;
-		}
-	}
+//	protected enum Direction{
+//		NORTH(0), SOUTH(1), EAST(2), WEST(3);
+//		
+//		private int value;
+//		
+//		private Direction(int value){
+//			this.value = value;
+//		}
+//	};
 	
 	/**
 	 * Purpose:Readjust the probability of movement / policy so there is a slight reward for
