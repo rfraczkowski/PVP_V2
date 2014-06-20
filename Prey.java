@@ -6,7 +6,7 @@ import sim.field.grid.SparseGrid2D;
 import sim.util.Bag;
 import sim.util.Int2D;
 import sim.util.IntBag;
-import java.io.*;
+//import java.io.*;
 /**
  * This class represents the prey implementation of animal.
  * @author rachelfraczkowski
@@ -18,24 +18,29 @@ public class Prey extends Animal implements Steppable{
 	private static final long serialVersionUID = 1L;
 	
 	//static data members
-	private static double defaultDeathRate;
+//	private static double defaultDeathRate;
 	private static int deathRandNum = 1000;
 //	private static double agingDeathMod;
 	private static double hungerDeathMod = .05; //the increase to death likelihood based on hunger
 	private static int repAge;//the age at which reproduction is possible
-	private static double defaultRepRate = .20;
+//	private static double defaultRepRate = .20;
 	private static double actualRepRate;
+	private static double actualDeathRate;
 	private static int lastMealLow = 15;
 //	private static int lastMealMed;
 //	private static int lastMealHigh;
 	private static double foodReduction = .9; //the amount by which food decreases when eaten
 	protected static int repRandNum = 1000;
+	private static boolean learn = true; //by default prey use learning
 	
-	//non-static data members
-	private double actualDeathRate;
+	//used for statistics only
+	protected static int reproductionCollectPrey = 0;
+	protected static int deathCollectPrey = 0;
+	protected static int predOutran = 0; //increased in a step if there are fewer predators in sight than last time
+	protected int predSeen = 0; //how many predators were seen in prior timestep, to determine if any were outrun 
+
 	protected int eatingChance;
-	protected boolean predSeen = false;
-	private Bag seen;
+//	private Bag seen;
 	protected double diseaseRecovery = .25;
 
 	/*
@@ -44,7 +49,7 @@ public class Prey extends Animal implements Steppable{
 	 */
 	Prey(SimState state, int num)
 	{
-	
+		
 		direction = state.random.nextInt(3);
 		
 //		oldAge = 10;
@@ -102,24 +107,24 @@ public class Prey extends Animal implements Steppable{
 	 * Input: Parameters
 	 * Output:None
 	 */
-	protected final static void initializePrey(int maxH, int old,
-			double dR, int dRN, double agDM, double hDM, int lmL, int lmM, int lmH, int rA, double dRR, int rRN )
-	{
-	
-		maxHunger = maxH;
-		//oldAge = old;
-		defaultDeathRate = dR;
-		deathRandNum = dRN;
-	//	agingDeathMod = agDM;
-		hungerDeathMod = hDM;
-		lastMealLow = lmL;
-	//	lastMealMed = lmM;
-	//	lastMealHigh = lmH;
-		repAge = rA;
-		defaultRepRate = dRR;
-		repRandNum = rRN;
-		
-	}
+//	protected final static void initializePrey(int maxH, int old,
+//			double dR, int dRN, double agDM, double hDM, int lmL, int lmM, int lmH, int rA, double dRR, int rRN )
+//	{
+//	
+//		maxHunger = maxH;
+//		//oldAge = old;
+//	//	defaultDeathRate = dR;
+//		deathRandNum = dRN;
+//	//	agingDeathMod = agDM;
+//		hungerDeathMod = hDM;
+//		lastMealLow = lmL;
+//	//	lastMealMed = lmM;
+//	//	lastMealHigh = lmH;
+//		repAge = rA;
+//	//	defaultRepRate = dRR;
+//		repRandNum = rRN;
+//		
+//	}
 	/*
 	 * Purpose: Needs to be stoppable in order for the simulation to end.
 	 * Fixed this error by making this method.
@@ -163,59 +168,62 @@ public class Prey extends Animal implements Steppable{
 		assert(cord.y > 0);
 		
 		//Get empty bags to be filled by Moore Neighborhood Method
-		Bag result = new Bag();
+		Bag neighbors = new Bag();
 		IntBag xPos = new IntBag();
 		IntBag yPos = new IntBag();
 		
 		assert(this != null);
 
 		//Fills the bags with the objects in the prey's moore neighborhood
-		grid.getMooreNeighbors(cord.x, cord.y, 1, Grid2D.TOROIDAL, result, xPos, yPos);
+		grid.getMooreNeighbors(cord.x, cord.y, 1, Grid2D.TOROIDAL, neighbors, xPos, yPos);
+		neighbors.shuffle(state.random);
 		
 		//Boolean to run away from first seen predator
 		boolean first = true;
+		int countPredators = 0;
 		
 		//Goes through all of the objects in the visual, and sees what every object is,
 		//and reacts accordingly.
-		for(int i = 0; i < result.numObjs; i++)
+		for(int i = 0; i < neighbors.numObjs; i++)
 		{
-			Object temp = result.get(i);
+			Object temp = neighbors.get(i);
 			//write("Result: " + temp);
 			
-			if(temp instanceof Predator && first == true){
-				
-				//Get location of predator
-				Int2D pred = grid.getObjectLocation(temp);
-				//write(pred.x + "," + pred.y + ",");
-				predSeen = true;
-				//write(deltaX + "," + deltaY + ",");
-				//emotions -= eRate;
-				
-				//write(direction + ",");
-				
-				Int2D opp = this.find_Opp(cord, pred);
-				this.setMovementPref(cord, opp, state);
-				first = false;
-			}
-			else
-			{
-				if(predSeen == true)
-					predOutran++;
-				predSeen = false;
-			}
-			
-			
+			if(temp instanceof Predator){
+				countPredators++;
+				if(learn && first) //all contents of this if statement are for learning based on first predator seen
+				{
+					//Get location of predator
+					Int2D pred = grid.getObjectLocation(temp);
+					//write(pred.x + "," + pred.y + ",");
+					//predSeen = true;
+					//write(deltaX + "," + deltaY + ",");
+					//emotions -= eRate;
+					
+					//write(direction + ",");
+					
+					Int2D opp = this.find_Opp(cord, pred);
+					this.setMovementPref(cord, opp, state);
+					first = false;
+				}
+			}	
 		}
+		
+		//determine if there are fewer neighboring predators this turn
+		//if so, the difference is how many were outrun
+		if(countPredators > predSeen)
+			predOutran = predSeen - countPredators;
+		predSeen = countPredators; //set to predators from this timestep for use in next timestep's calculations
 		
 		//Bag for multiple foods
 		Bag food = new Bag();
 		
-		for(int i = 0; i < result.numObjs; i++)
+		for(int i = 0; i < neighbors.numObjs; i++)
 		{
-			Object temp = result.get(i);
+			Object temp = neighbors.get(i);
 			
 			//If the prey sees food and not a predator, add it to change movement
-			if(temp instanceof Food && first == true)
+			if(temp instanceof Food && first)
 			{
 				food.add(temp);
 				//emotions += 1;
@@ -229,7 +237,8 @@ public class Prey extends Animal implements Steppable{
 			int random = state.random.nextInt(food.size());
 			Food goal = (Food)food.remove(random);
 			Int2D foodLoc = grid.getObjectLocation(goal);
-			this.setMovementPref(cord, foodLoc, state);
+			if (learn)
+				this.setMovementPref(cord, foodLoc, state);
 		}
 		
 	 
@@ -337,6 +346,7 @@ public class Prey extends Animal implements Steppable{
 		
 		Prey p = new Prey(state, grid, numPrey + 1, learnedProb);
 		numPrey++;
+		reproductionCollectPrey++; //statistics only
 		grid.setObjectLocation(p, grid.getObjectLocation(this));
 		Stoppable stop = state.schedule.scheduleRepeating(p);
 		p.makeStoppable(stop);
@@ -365,6 +375,7 @@ public class Prey extends Animal implements Steppable{
 		if(death < actualDeathRate && death != 0){
 			this.stop.stop();
 			numPrey--;
+			deathCollectPrey++; //statistics only
 			grid.remove(this);
 			return true;
 		}
@@ -394,6 +405,38 @@ public class Prey extends Animal implements Steppable{
 	public static void setLastMealLow(int i)
 	{
 		lastMealLow = i;
+	}
+	/*
+	 * Purpose: mutator for setting the age at which reproduction is possible
+	 * @param int the new value
+	 */
+	public static void setrepAge(int i)
+	{
+		repAge = i;
+	}
+	/*
+	 * Purpose: mutator for setting the reproduction rate
+	 * @param double the new value
+	 */
+	public static void setRepRate(double i)
+	{
+		actualRepRate = i;
+	}
+	/*
+	 * Purpose: mutator for setting the death rate
+	 * @param double the new value
+	 */
+	public static void setDeathRate(double i)
+	{
+		actualDeathRate = i;
+	}
+	/*
+	 * Purpose: mutator for setting whether or not the species learns
+	 * @param boolean the new value
+	 */
+	public static void setLearn(boolean i)
+	{
+		learn = i;
 	}
 }
 
