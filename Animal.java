@@ -13,7 +13,6 @@ import sim.util.Int2D;
 public abstract class Animal implements Steppable {
 
 	protected SparseGrid2D grid;
-//	protected boolean isDiseased = false;
 	protected static FileWriter writer;
 	protected String outputString = "";
 
@@ -23,7 +22,6 @@ public abstract class Animal implements Steppable {
 //	protected int oldAge; 
 	protected int direction;
 	protected int lastMeal = 0;
-	static double interval = 500;
 	protected double[] actualProb = {11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11};
 	protected double[][] learnedProb = {
 			
@@ -38,9 +36,9 @@ public abstract class Animal implements Steppable {
 			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}
 	};
 	//protected double[] learnedMov = actualProb;
-	//Arrays for remembering policy
-	protected double[] upLeft = {};
-	protected double[] up = {};
+	//Arrays for remembering policy - commented out as unused
+//	protected double[] upLeft = {};
+//	protected double[] up = {};
 	//protected double[] actualProb = new double[8];
 	public final static int NORTH = 0;
 	public final static int SOUTH = 1;
@@ -56,18 +54,7 @@ public abstract class Animal implements Steppable {
 	protected Stoppable stop;
 
 	protected static int maxHunger;
-	protected static int lastNumPrey = 0;
-	protected int lastNumPredator = 0;
 //	protected int lastSeenPredator;
-	
-	/* below values are used for statistics */
-	protected static int deathCollectPrey;
-	protected static int deathCollectPredator;
-	protected static int reproductionCollectPrey;
-	protected static int reproductionCollectPredator;
-	protected static int preyCaught = 0;
-	protected static int predOutran = 0;
-	
 //	protected int lastSeenPrey;
 //	protected int maxSeenPredator;
 	protected int lastRep;
@@ -79,9 +66,12 @@ public abstract class Animal implements Steppable {
 	protected int directChangeTotal = 0;
 	protected String ID;
 	protected Bag allObjects = new Bag();
+	protected Int2D prevLoc;
+	
+	/* Disease related data members */
 //	protected double diseaseTimestep;
 //	protected int diseaseRandomNum = 100;
-	protected Int2D prevLoc;
+//	protected boolean isDiseased = false;
 
 	/* emotion related data members */
 	//protected ExpectationMap map;
@@ -119,6 +109,7 @@ public abstract class Animal implements Steppable {
 	**/
 	@Override
 	public void step(SimState state) {
+	//	System.out.println(ID + " " + age + " " + ((PVP_2)state).world.getObjectLocation(this).x + " " + ((PVP_2)state).world.getObjectLocation(this).y);
 		//PVPEmo pvp = (PVPEmo)state;
 		PVP_2 pvp = (PVP_2)state;
 		age++;
@@ -126,7 +117,7 @@ public abstract class Animal implements Steppable {
 		this.move(grid, pvp);
 		
 		//printLP(state);
-		age++;
+//		age++;
 		lastMeal++;
 		lastRep++;
 
@@ -139,33 +130,7 @@ public abstract class Animal implements Steppable {
 
 		velocity= 1;
 	
-		//Updates stats every step
-		if(lastNumPrey > numPrey)
-			deathCollectPrey += (lastNumPrey - numPrey);
-		else if(lastNumPrey < numPrey)
-			reproductionCollectPrey += (numPrey - lastNumPrey);
-		
-		if(lastNumPredator > numPredator)
-			deathCollectPredator += (lastNumPredator - numPredator);
-		else if(lastNumPredator < numPredator)
-			reproductionCollectPredator += (numPredator - lastNumPredator);
-		
-		if(state.schedule.getTime() % interval == 0)
-			printFinalStats(state);
-		
-		//write(state.schedule.getTime() + ", " + numPrey + ", " + numPredator);
-		
-		//If either all the prey are dead, or all the predator, then stop the simulation
-		// and print the final stats.
-		if(numPrey == 0 || numPredator == 0){
-			write("End of sim,");
-			printFinalStats(state);
-			state.kill();
-		}
-		
-		
-		lastNumPrey = numPrey;
-		lastNumPredator = numPredator;
+		//All statistics that should happen per time step are now in the StatisticsAgent step method
 	
 	}
 
@@ -184,50 +149,25 @@ public abstract class Animal implements Steppable {
 			for(int j = 0; j < (learnedProb[0].length); j++)
 					write("|" + learnedProb[i][j] + "|");
 	}
+	
 	/**
-		*Purpose: Prints the final stats of the simulation
-		*Input: SimState
-		*Output:Statistics to screen
-	**/
-	protected void printFinalStats(SimState state){
-		
-		write("\nTimeStep:" + (int)state.schedule.getTime() + ",");
-		
-		double finalRepRatePrey = reproductionCollectPrey/interval;
-		double finalDeathRatePrey = deathCollectPrey/interval;
-		
-		double finalRepRatePredator = reproductionCollectPredator/interval;
-		double finalDeathRatePredator = deathCollectPredator/interval;
-		double predOutranRate = predOutran/interval;
-		double preyCaughtRate = preyCaught/interval;
-		
-		write("Prey,");
-		write("Prey Total: " + numPrey + ",");
-		write("Death Rate: " + finalDeathRatePrey + ",");
-		write("Reproduction Rate: " + finalRepRatePrey + ",");
-		write("Learning Outrun Pred: " + predOutranRate + ",");
-		write("Prey Stay: " + preyStay + ",");
-		write("Predator,");
-		write("Predator Total: " + numPredator + ",");
-		write("Death Rate: " + finalDeathRatePredator + ",");
-		write("Reproduction Rate: " + finalRepRatePredator + ",");
-		write("Learning Catch Prey: " + preyCaughtRate + ",");
-		write("Predator Stay: " + predStay + ",");
-		write("Food,");
-		write("Food Total" + ".1" + ",");
-		write("Food Clustered" + "Yes" + ",");
-		
-		reproductionCollectPrey = 0;
-		deathCollectPrey = 0;
-		reproductionCollectPredator = 0;
-		deathCollectPredator = 0;
-		predOutran = 0;
-		preyCaught = 0;
-		preyStay = 0;
-		predStay = 0;
-		
-		
+	 * Purpose: Write the learned probability to standard output
+	 * @param State of the World
+	 * Output: Writes to file/output the amounts of learned probability and ID
+	 **/
+	public void printLPSO(SimState state)
+	{
+		System.out.print("\n" + ID);
+		//System.out.println(learnedProb.length);
+		//System.out.println(learnedProb[0].length);
+		for(int i = 0; i < (learnedProb.length); i++)
+		{
+			System.out.print("\n|");
+			for(int j = 0; j < (learnedProb[0].length); j++)
+					System.out.print(learnedProb[i][j] + "|");
+		}
 	}
+
 	/**
 		*Purpose: Moves agent based on object position
 		*Input:Grid of the world and the state of the world
@@ -972,6 +912,7 @@ public abstract class Animal implements Steppable {
 	{
 		try
 		{
+		//	System.out.print("writing..." + out);
 			writer.append(out);
 			//writer.append('\n');
 		}
