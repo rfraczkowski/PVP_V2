@@ -149,6 +149,7 @@ public abstract class Animal implements Steppable {
 			for(int j = 0; j < (learnedProb[0].length); j++)
 					write("|" + learnedProb[i][j] + "|");
 	}
+<<<<<<< HEAD
 	
 	/**
 	 * Purpose: Write the learned probability to standard output
@@ -167,6 +168,8 @@ public abstract class Animal implements Steppable {
 					System.out.print(learnedProb[i][j] + "|");
 		}
 	}
+=======
+>>>>>>> FETCH_HEAD
 
 	/**
 		*Purpose: Moves agent based on object position

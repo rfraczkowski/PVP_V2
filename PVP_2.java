@@ -134,6 +134,7 @@ public class PVP_2 extends SimState{
 		Stoppable stop = schedule.scheduleRepeating(0.0,1, stat,interval); //time, ordering, agent, interval
 		//not necessary as only stops when simulation ended: stat.makeStoppable(stop);
 		
+<<<<<<< HEAD
 	}
 	
 	/**
@@ -163,6 +164,8 @@ public class PVP_2 extends SimState{
 		{
 			System.err.print("Failure in closing writer stream from Animal");
 		}
+=======
+>>>>>>> FETCH_HEAD
 	}
 	
 	/**

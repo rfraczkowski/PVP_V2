@@ -18,15 +18,23 @@ public class Prey extends Animal implements Steppable{
 	private static final long serialVersionUID = 1L;
 	
 	//static data members
+<<<<<<< HEAD
 	private static int IDCounter = 0;
 	private static double defaultDeathRate;
+=======
+//	private static double defaultDeathRate;
+>>>>>>> FETCH_HEAD
 	private static int deathRandNum = 1000;
 //	private static double agingDeathMod;
 	private static double hungerDeathMod = .05; //the increase to death likelihood based on hunger
 	private static int repAge;//the age at which reproduction is possible
 //	private static double defaultRepRate = .20;
 	private static double actualRepRate;
+<<<<<<< HEAD
 	private double actualDeathRate; //can't be static because may change agent by agent due to hunger
+=======
+	private static double actualDeathRate;
+>>>>>>> FETCH_HEAD
 	private static int lastMealLow = 15;
 //	private static int lastMealMed;
 //	private static int lastMealHigh;
@@ -42,7 +50,11 @@ public class Prey extends Animal implements Steppable{
 
 	protected int eatingChance;
 //	private Bag seen;
+<<<<<<< HEAD
 //	protected double diseaseRecovery = .25;
+=======
+	protected double diseaseRecovery = .25;
+>>>>>>> FETCH_HEAD
 
 	/**
 	 * Purpose: Constructor for use at beginning of simulation ONLY
@@ -356,7 +368,12 @@ public class Prey extends Animal implements Steppable{
 	public void reproduce(SimState state)
 	{
 		
+<<<<<<< HEAD
 		Prey p = new Prey(state, grid, learnedProb);
+=======
+		Prey p = new Prey(state, grid, numPrey + 1, learnedProb);
+		numPrey++;
+>>>>>>> FETCH_HEAD
 		reproductionCollectPrey++; //statistics only
 		grid.setObjectLocation(p, grid.getObjectLocation(this));
 		Stoppable stop = state.schedule.scheduleRepeating(p);
@@ -417,7 +434,11 @@ public class Prey extends Animal implements Steppable{
 	{
 		lastMealLow = i;
 	}
+<<<<<<< HEAD
 	/**
+=======
+	/*
+>>>>>>> FETCH_HEAD
 	 * Purpose: mutator for setting the age at which reproduction is possible
 	 * @param int the new value
 	 */
@@ -425,7 +446,11 @@ public class Prey extends Animal implements Steppable{
 	{
 		repAge = i;
 	}
+<<<<<<< HEAD
 	/**
+=======
+	/*
+>>>>>>> FETCH_HEAD
 	 * Purpose: mutator for setting the reproduction rate
 	 * @param double the new value
 	 */
@@ -433,15 +458,25 @@ public class Prey extends Animal implements Steppable{
 	{
 		actualRepRate = i;
 	}
+<<<<<<< HEAD
 	/**
+=======
+	/*
+>>>>>>> FETCH_HEAD
 	 * Purpose: mutator for setting the death rate
 	 * @param double the new value
 	 */
 	public static void setDeathRate(double i)
 	{
+<<<<<<< HEAD
 		defaultDeathRate = i;
 	}
 	/**
+=======
+		actualDeathRate = i;
+	}
+	/*
+>>>>>>> FETCH_HEAD
 	 * Purpose: mutator for setting whether or not the species learns
 	 * @param boolean the new value
 	 */

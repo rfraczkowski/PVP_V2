@@ -19,8 +19,11 @@ public class StatisticsAgent extends Animal implements Steppable {
 	public StatisticsAgent(double i)
 	{
 		interval = i;
+<<<<<<< HEAD
 		write("Time, numPrey, numPred, preyDeathByInterval, preyReproductionByInterval, predOutran, predDeathByInterval, predReproductionByInterval, preyCaughtByInterval, preyStay, predStay\n");
 		
+=======
+>>>>>>> FETCH_HEAD
 	}
 	@Override
 	public void step(SimState state) {
@@ -61,7 +64,11 @@ public class StatisticsAgent extends Animal implements Steppable {
 	**/
 	protected void printStats(SimState state){
 	
+<<<<<<< HEAD
 		write((int)state.schedule.getTime() + ","); //added minus 1, as if it is scheduled as first agent then the stats are through prior timestep
+=======
+		write("\nTimeStep:" + (int)state.schedule.getTime() + ","); //added minus 1, as if it is scheduled as first agent then the stats are through prior timestep
+>>>>>>> FETCH_HEAD
 		
 		double finalRepRatePrey = Prey.reproductionCollectPrey/interval;
 		double finalDeathRatePrey = Prey.deathCollectPrey/interval;
@@ -89,6 +96,7 @@ public class StatisticsAgent extends Animal implements Steppable {
 		write("Food Clustered" + "Yes" + ",");
 		*/
 		write(numPrey + ",");
+<<<<<<< HEAD
 		write(numPredator + ",");
 		write(finalDeathRatePrey + ",");
 		write(finalRepRatePrey + ",");
@@ -100,6 +108,18 @@ public class StatisticsAgent extends Animal implements Steppable {
 		write(predStay + "\n");
 		//write(".1" + ",");
 		//write(((PVP_2) state).getClusters()+"\n");
+=======
+		write(finalDeathRatePrey + ",");
+		write(finalRepRatePrey + ",");
+		write(predOutranRate + ",");
+		write(preyStay + ",");
+		write(numPredator + ",");
+		write(finalDeathRatePredator + ",");
+		write(finalRepRatePredator + ",");
+		write(preyCaughtRate + ",");
+		write(predStay + ",");
+		write(".1");
+>>>>>>> FETCH_HEAD
 		
 		Prey.reproductionCollectPrey = 0;
 		Prey.deathCollectPrey = 0;
@@ -109,7 +129,12 @@ public class StatisticsAgent extends Animal implements Steppable {
 		Predator.preyCaught = 0;
 		preyStay = 0;
 		predStay = 0;
+<<<<<<< HEAD
 			
+=======
+
+		
+>>>>>>> FETCH_HEAD
 	}
 	@Override
 	protected void eat(Object p, SimState state) {

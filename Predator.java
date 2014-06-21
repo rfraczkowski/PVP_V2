@@ -19,8 +19,13 @@ import sim.util.IntBag;
 public class Predator extends Animal implements Steppable{
 
 	//Values for reproduction, eating, death
+<<<<<<< HEAD
 	private static double defaultDeathRate; //each agent starts with this value
 	private double actualDeathRate; //by agent, which may change over time
+=======
+//	private static double defaultDeathRate;
+	private static double actualDeathRate;
+>>>>>>> FETCH_HEAD
 	private static int deathRandNum = 1000;
 //	private static double agingDeathMod;
 	private static double hungerDeathMod;
@@ -43,7 +48,11 @@ public class Predator extends Animal implements Steppable{
 	//private Bag seen;
 	//protected double diseaseRecovery = .25;
 	private boolean caught = false; //has it caught anything this timestep
+<<<<<<< HEAD
 	private static int IDCounter = 0;
+=======
+
+>>>>>>> FETCH_HEAD
 
 	/**
 	 * Constructor for use at start of simulation ONLY; does not change numPredators as it was set to start amount
@@ -386,7 +395,12 @@ public class Predator extends Animal implements Steppable{
 		
 		//write("Predator Reproduced");
 		
+<<<<<<< HEAD
 		Predator p = new Predator(state, grid, learnedProb);
+=======
+		Predator p = new Predator(state, grid, numPredator + 1, learnedProb);
+		numPredator++;
+>>>>>>> FETCH_HEAD
 		reproductionCollectPredator++;
 		grid.setObjectLocation(p, grid.getObjectLocation(this));
 		Stoppable stop = state.schedule.scheduleRepeating(p);
@@ -423,7 +437,11 @@ public class Predator extends Animal implements Steppable{
 	 */
 	public static void setDeathRate(double i)
 	{
+<<<<<<< HEAD
 		defaultDeathRate = i;
+=======
+		actualDeathRate = i;
+>>>>>>> FETCH_HEAD
 	}
 	/*
 	 * Purpose: mutator for setting whether or not the species learns
