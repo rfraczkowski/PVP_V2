@@ -287,6 +287,9 @@ public class PVP_2 extends SimState{
 		numPred = Integer.parseInt(args[++p]);
 		numFood = Integer.parseInt(args[++p]);
 		clusters = Integer.parseInt(args[++p]);
+		
+		Food.setNumFood(numFood);
+		
 		//Expectation Decay Rate
 //		expectationMapDecay = Double.parseDouble(args[++p]);
 		

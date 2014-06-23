@@ -36,7 +36,8 @@ public class Food implements Steppable {
 		
 		//Slowly grows back
 		amount += regrowthRate;
-		
+		if(amount > 1)
+			amount = 1;
 		//Chance of disease
 		//this.diseaseChance(pvp);
 		

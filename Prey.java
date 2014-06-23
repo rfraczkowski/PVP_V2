@@ -30,7 +30,7 @@ public class Prey extends Animal implements Steppable{
 	private static int lastMealLow = 15;
 //	private static int lastMealMed;
 //	private static int lastMealHigh;
-	private static double foodReduction = .9; //the amount by which food decreases when eaten
+	private static double foodReduction = .2; //the amount by which food decreases when eaten
 	protected static int repRandNum = 1000;
 	private static boolean learn = true; //by default prey use learning
 	
@@ -305,7 +305,7 @@ public class Prey extends Animal implements Steppable{
 			
 			for(int i = 0; i < gridNum; i++){
 				Object obj = (grid.getObjectsAtLocationOfObject(this)).get(i);
-				if(obj.getClass().equals(Food.class) && obj != null){
+				if(obj != null && obj.getClass().equals(Food.class)){
 					//write("Prey would have eaten");
 					this.eat(obj, state);
 					return true;
