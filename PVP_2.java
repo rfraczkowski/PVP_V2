@@ -250,6 +250,22 @@ public class PVP_2 extends SimState{
 		return clusters;
 	}
 	/**
+	 * Returns the width of the world
+	 * @return int gridWidth
+	 */
+	protected static int getWidth()
+	{
+		return gridWidth;
+	}
+	/**
+	 * Returns the height of the world
+	 * @return int gridHeight
+	 */
+	protected static int getHeight()
+	{
+		return gridHeight;
+	}
+	/**
 	 * Runs the simulation using the built in "doLoop" that steps through scheduled agents.
 	 * @param args
 	 */

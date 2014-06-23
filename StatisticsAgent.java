@@ -22,7 +22,7 @@ public class StatisticsAgent extends Animal implements Steppable {
 	{
 		interval = i;
 		//write("Time, numPrey, numPred, preyDeathByInterval, preyReproductionByInterval, predOutran, predDeathByInterval, predReproductionByInterval, preyCaughtByInterval, preyStay, predStay\n");
-		write("Time, numPrey, numPred, preyDeath, preyReproduction, predOutran, predDeath, predReproduction, preyCaught, preyStay, predStay\n");
+		write("Time, numPrey, numPred, numFood, preyDeath, preyReproduction, predOutran, predDeath, predReproduction, preyCaught, preyStay, predStay\n");
 	}
 	@Override
 	public void step(SimState state) {
@@ -93,6 +93,7 @@ public class StatisticsAgent extends Animal implements Steppable {
 		*/
 		write(numPrey + ",");
 		write(numPredator + ",");
+		write(Food.numFood + ",");
 		write(finalDeathRatePrey + ",");
 		write(finalRepRatePrey + ",");
 		write(predOutranRate + ",");

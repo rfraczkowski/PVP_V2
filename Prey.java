@@ -336,14 +336,16 @@ public class Prey extends Animal implements Steppable{
 				this.diseaseTimestep = state.schedule.getTime();
 			}*/
 			//write(this + " ate " + p);
-			food.amount = food.amount - foodReduction;
-			if(food.amount <0){
-				//amount = 0.0;
-				//may be a point where it is being removed, but not stopped.
-				food.stop.stop();
-				grid.remove(food);
-				
-			}
+			//the below code was removed in favor of using the identical code in Food class
+//			food.amount = food.amount - foodReduction;
+//			if(food.amount <0){
+//				//amount = 0.0;
+//				//may be a point where it is being removed, but not stopped.
+//				food.stop.stop();
+//				grid.remove(food);
+//				
+//			}
+			food.eat(foodReduction);
 			lastMeal = 0;
 			
 			//write("Food is removed");
