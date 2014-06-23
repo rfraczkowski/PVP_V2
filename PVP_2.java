@@ -66,6 +66,10 @@ public class PVP_2 extends SimState{
 	public void start()
 	{
 		super.start();
+		//set up random number generator to get to better random seeds
+		for(int i=0; i<6000; i++)
+			random.nextInt();
+		
 		world = new SparseGrid2D(gridWidth, gridHeight);
 		//grid.clear();
 		Animal.initialize(numPrey, numPred, dir, filename);
@@ -134,7 +138,6 @@ public class PVP_2 extends SimState{
 		Stoppable stop = schedule.scheduleRepeating(0.0,1, stat,interval); //time, ordering, agent, interval
 		//not necessary as only stops when simulation ended: stat.makeStoppable(stop);
 		
-<<<<<<< HEAD
 	}
 	
 	/**
@@ -164,8 +167,6 @@ public class PVP_2 extends SimState{
 		{
 			System.err.print("Failure in closing writer stream from Animal");
 		}
-=======
->>>>>>> FETCH_HEAD
 	}
 	
 	/**
@@ -254,6 +255,7 @@ public class PVP_2 extends SimState{
 	 */
 	public static void main(String[] args)
 	{
+
 		short p = -1; //count of which parameter is being input, so it's easy to modify this list
 		//Parameters get assigned here
 		dir = new File(args[++p]);
@@ -290,6 +292,7 @@ public class PVP_2 extends SimState{
 		Prey.setLastMealLow(preyLastMealLow);
 		Prey.setrepAge(preyRepAge);
 		Prey.setRepRate(preyRepRate);
+		Prey.setLearn(preyLearn);
 		
 		// Predator Only Parameters
 //		int predMaxHunger = Integer.parseInt(args[++p]);
@@ -309,6 +312,7 @@ public class PVP_2 extends SimState{
 		Predator.setLastMealLow(predLastMealMed);
 		Predator.setrepAge(predRepAge);
 		Predator.setRepRate(predRepRate);
+		Predator.setLearn(predLearn);
 		
 //		Prey.initializePrey(preyMaxHunger, preyOldAge, preyDeathRate, preyDeathRandNum, preyAgingDeathMod,
 //				preyHungerDeathMod, preyLastMealLow, preyLastMealMed, preyLastMealHigh, preyRepAge,
