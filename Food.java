@@ -1,4 +1,4 @@
-package sim.app.PVP_V2.src.pvp;
+package sim.app.PVP_V2;
 /*
  * This class is for the food in the system
  */

@@ -1,4 +1,4 @@
-package sim.app.PVP_V2.src.pvp;
+package sim.app.PVP_V2;
 
 import sim.engine.*;
 import sim.field.grid.Grid2D;

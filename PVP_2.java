@@ -3,7 +3,7 @@
 * This is the non-visual version of the simulation. 
 ***/
 
-package sim.app.PVP_V2.src.pvp;
+package sim.app.PVP_V2;
 
 import java.io.File;
 import java.io.IOException;

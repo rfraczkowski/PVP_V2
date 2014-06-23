@@ -1,4 +1,4 @@
-package sim.app.PVP_V2.src.pvp;
+package sim.app.PVP_V2;
 //Class for Animal, Parent Class for Predator and Prey
 
 import java.io.*;
