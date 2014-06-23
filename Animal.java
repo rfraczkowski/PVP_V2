@@ -149,7 +149,6 @@ public abstract class Animal implements Steppable {
 			for(int j = 0; j < (learnedProb[0].length); j++)
 					write("|" + learnedProb[i][j] + "|");
 	}
-<<<<<<< HEAD
 	
 	/**
 	 * Purpose: Write the learned probability to standard output
@@ -168,8 +167,6 @@ public abstract class Animal implements Steppable {
 					System.out.print(learnedProb[i][j] + "|");
 		}
 	}
-=======
->>>>>>> FETCH_HEAD
 
 	/**
 		*Purpose: Moves agent based on object position
@@ -586,7 +583,7 @@ public abstract class Animal implements Steppable {
 		
 		int slope = deltaX + deltaY;
 		
-		assert(Math.abs(slope) <=2);
+//		assert Math.abs(slope) <=2 : "Slope was > 2: " + animal.x + " " + goal.x;
 		//write("DeltaX =" + deltaX);
 		//write(" DeltaY  = " + deltaY);
 		//write(slope + ",");
@@ -679,15 +676,16 @@ public abstract class Animal implements Steppable {
 		adjustRewardProbabilities(pvp, increase, tempProb, g, o);
 		
 		//OLSEN -- is all of this just for output? Or is it doing something? What is the point of the if statement?
-		double sum = 0;
-		for(int j = 0; j < 9; j++)
-		{
-			if(this.ID.equals("F0"))
-				write(tempProb[j] + ",");
-			sum += tempProb[j];
-		}
-		if(this.ID.equals("F0"))
-			write(sum + ",");
+//		double sum = 0;
+//		for(int j = 0; j < 9; j++)
+//		{
+//			if(this.ID.equals("F0"))
+//				write(tempProb[j] + ",");
+//			sum += tempProb[j];
+//		}
+//		if(this.ID.equals("F0"))
+//			write(sum + ",");
+		//The above code ruins the output file. If it is output, it should be to a completely separate file.
 		
 		actualProb = tempProb;
 	}
@@ -739,8 +737,8 @@ public abstract class Animal implements Steppable {
 		for(int j = 0; j < 9; j++)
 		{
 			//Write before positions
-			if(this.ID.equals("F0"))
-			write(tempProb[j] + ",");
+			//if(this.ID.equals("F0")) //this line and one below commented out by OLSEN to preserve output file
+			//write(tempProb[j] + ",");
 			//System.out.print("j:" + tempProb[j] + ",");
 			//if(j != g)
 			//{
@@ -748,9 +746,9 @@ public abstract class Animal implements Steppable {
 			//}
 		}
 		
-		//Write before position sum
-		if(this.ID.equals("F0"))
-			write(sum + ",");
+		//Write before position sum //commented out by OLSEN
+	//	if(this.ID.equals("F0"))
+		//	write(sum + ",");
 		sum -= tempProb[goal];
 		
 		//If the increase is not more than the opposite square, adjust increase
