@@ -20,9 +20,9 @@ public class Prey extends Animal implements Steppable{
 	//static data members
 	private static int IDCounter = 0;
 	private static double defaultDeathRate;
-	private static int deathRandNum = 1000;
+	private static int deathRandNum = 10000;
 //	private static double agingDeathMod;
-	private static double hungerDeathMod = 1.05; //the increase to death likelihood based on hunger
+	private static double hungerDeathMod = 2; //the increase to death likelihood based on hunger
 	private static int repAge;//the age at which reproduction is possible
 //	private static double defaultRepRate = .20;
 	private static double actualRepRate;
@@ -40,7 +40,7 @@ public class Prey extends Animal implements Steppable{
 	protected static int predOutran = 0; //increased in a step if there are fewer predators in sight than last time
 	protected int predSeen = 0; //how many predators were seen in prior timestep, to determine if any were outrun 
 
-	protected int eatingChance;
+//	protected int eatingChance;
 //	private Bag seen;
 //	protected double diseaseRecovery = .25;
 
@@ -174,8 +174,8 @@ public class Prey extends Animal implements Steppable{
 	 	//Location of this prey
 		Int2D cord = grid.getObjectLocation(this);
 		assert(cord != null);
-		assert(cord.x > 0);
-		assert(cord.y > 0);
+		assert(cord.x >= 0);
+		assert(cord.y >= 0);
 		
 		//Get empty bags to be filled by Moore Neighborhood Method
 		Bag neighbors = new Bag();
@@ -221,13 +221,14 @@ public class Prey extends Animal implements Steppable{
 		
 		//determine if there are fewer neighboring predators this turn
 		//if so, the difference is how many were outrun
-		if(countPredators > predSeen)
-			predOutran = predSeen - countPredators;
+		if(countPredators < predSeen)
+			predOutran += predSeen - countPredators;
 		predSeen = countPredators; //set to predators from this timestep for use in next timestep's calculations
 		
 		//Bag for multiple foods
 		Bag food = new Bag();
 		
+		//System.out.println("---" + cord.x + " " + cord.y + "---");
 		for(int i = 0; i < neighbors.numObjs; i++)
 		{
 			Object temp = neighbors.get(i);
@@ -236,6 +237,7 @@ public class Prey extends Animal implements Steppable{
 			if(temp instanceof Food && first)
 			{
 				food.add(temp);
+		//		System.out.println(grid.getObjectLocation(temp).x + " " + grid.getObjectLocation(temp).y);
 				//emotions += 1;
 			}
 			
@@ -385,7 +387,7 @@ public class Prey extends Animal implements Steppable{
 		double death = d/deathRandNum;
 		
 		//write("d: " + d + " death: " + death);
-		if(death < actualDeathRate && death != 0){
+		if(death < actualDeathRate){// && death != 0){
 			this.stop.stop();
 			numPrey--;
 			deathCollectPrey++; //statistics only
@@ -405,7 +407,7 @@ public class Prey extends Animal implements Steppable{
 		double r = state.random.nextInt(repRandNum);
 		double repo = r/repRandNum;
 		//if(repo <= actualRepRate && age >= repAge && numPrey <= maxPrey){
-		if(repo <= actualRepRate && age >=repAge){
+		if(repo <= actualRepRate && age >=repAge && lastMeal <= lastMealLow){
 			this.reproduce(state);
 			return true;
 			}
@@ -450,6 +452,7 @@ public class Prey extends Animal implements Steppable{
 	public static void setLearn(boolean i)
 	{
 		learn = i;
+	//	System.out.println(learn);//testing
 	}
 }
 
