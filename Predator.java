@@ -21,16 +21,16 @@ public class Predator extends Animal implements Steppable{
 	//Values for reproduction, eating, death
 	private static double defaultDeathRate; //each agent starts with this value
 	private double actualDeathRate; //by agent, which may change over time
-	private static int deathRandNum = 1000;
+	private static int deathRandNum = 10000;
 //	private static double agingDeathMod;
 	private static double hungerDeathMod = 1.05;
 	private static int lastMealLow = 30;
 //	private static int lastMealMed;
 //	private static int lastMealHigh;
 	private static int repAge;
-	protected static int repRandNum = 100000;
+	protected static int repRandNum = 1000;
 //	protected static int defaultRepRandNum;
-	protected int eatingChance;
+//	protected int eatingChance;
 	private static double actualRepRate;
 //	private static double defaultRepRate = .1;
 	private static boolean learn = true; //by default prey use learning
@@ -366,7 +366,7 @@ public class Predator extends Animal implements Steppable{
 		double repo = r/repRandNum;
 				
 		assert (r >= 0 && repo >= 0);
-		if(repo <= actualRepRate && age >= repAge) //&& numPredator<=maxPredator)
+		if(repo <= actualRepRate && age >= repAge && lastMeal <= lastMealLow) //&& numPredator<=maxPredator)
 		{
 			this.reproduce(state);
 			this.lastRep = 0;
