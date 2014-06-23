@@ -8,7 +8,7 @@ import sim.util.Int2D;
 
 public class Food implements Steppable {
 
-	protected double amount = 1000;
+	protected double amount = 1;
 //	private double diseasePr = .005;
 //	private int diseaseRandNum = 10000;
 	private double repPr = .0005;
