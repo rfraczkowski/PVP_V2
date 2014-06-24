@@ -23,7 +23,7 @@ public class Predator extends Animal implements Steppable{
 	private double actualDeathRate; //by agent, which may change over time
 	private static int deathRandNum = 10000;
 //	private static double agingDeathMod;
-	private static double hungerDeathMod = 1.05;
+	private static double hungerDeathMod = 2;
 	private static int lastMealLow = 30;
 //	private static int lastMealMed;
 //	private static int lastMealHigh;
@@ -322,7 +322,8 @@ public class Predator extends Animal implements Steppable{
 	 */
 	public boolean iDie(SimState state)
 	{
-		
+		if(lastMeal <= lastMealLow) //can only die if they are hungry
+			return false;
 		 //older = more likely to die
 		 //if(age>oldAge)
 		 	//actualDeathRate = actualDeathRate * agingDeathMod;

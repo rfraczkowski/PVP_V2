@@ -176,6 +176,8 @@ public class Prey extends Animal implements Steppable{
 		assert(cord != null);
 		assert(cord.x >= 0);
 		assert(cord.y >= 0);
+		assert(cord.x < grid.getWidth());
+		assert(cord.y < grid.getHeight());
 		
 		//Get empty bags to be filled by Moore Neighborhood Method
 		Bag neighbors = new Bag();
@@ -300,17 +302,17 @@ public class Prey extends Animal implements Steppable{
 		assert(grid.getObjectsAtLocationOfObject(this) !=null);
 			//write("Num of objects at location: " + grid.getObjectsAtLocationOfObject(this));
 		
-			int gridNum = grid.getObjectsAtLocationOfObject(this).size();
-			
-			
-			for(int i = 0; i < gridNum; i++){
-				Object obj = (grid.getObjectsAtLocationOfObject(this)).get(i);
-				if(obj != null && obj.getClass().equals(Food.class)){
-					//write("Prey would have eaten");
-					this.eat(obj, state);
-					return true;
-				}// end of if
-			}// end of for loop
+		int gridNum = grid.getObjectsAtLocationOfObject(this).size();
+		
+		
+		for(int i = 0; i < gridNum; i++){
+			Object obj = (grid.getObjectsAtLocationOfObject(this)).get(i);
+			if(obj != null && obj.getClass().equals(Food.class)){
+				//write("Prey would have eaten");
+				this.eat(obj, state);
+				return true;
+			}// end of if
+		}// end of for loop
 		
 		
 		return false;
@@ -325,18 +327,18 @@ public class Prey extends Animal implements Steppable{
 	public void eat(Object p, SimState state){
 		
 		//write(p);
-			Food food = (Food) p;
-			assert(food != null);
-			//emotions += eRate;
-			//write("Prey ate food");
-			
-			/***********This was when food was diseased *******************************/
-			/*if(food.isDiseased()){
-				this.setDisease(true);
-				this.diseaseTimestep = state.schedule.getTime();
-			}*/
-			//write(this + " ate " + p);
-			//the below code was removed in favor of using the identical code in Food class
+		Food food = (Food) p;
+		assert(food != null);
+		//emotions += eRate;
+		//write("Prey ate food");
+		
+		/***********This was when food was diseased *******************************/
+		/*if(food.isDiseased()){
+			this.setDisease(true);
+			this.diseaseTimestep = state.schedule.getTime();
+		}*/
+		//write(this + " ate " + p);
+		//the below code was removed in favor of using the identical code in Food class
 //			food.amount = food.amount - foodReduction;
 //			if(food.amount <0){
 //				//amount = 0.0;
@@ -345,10 +347,10 @@ public class Prey extends Animal implements Steppable{
 //				grid.remove(food);
 //				
 //			}
-			food.eat(foodReduction);
-			lastMeal = 0;
-			
-			//write("Food is removed");
+		food.eat(foodReduction);
+		lastMeal = 0;
+//		System.out.println("ate");
+		//write("Food is removed");
 		
 	}
 	
@@ -365,6 +367,7 @@ public class Prey extends Animal implements Steppable{
 		grid.setObjectLocation(p, grid.getObjectLocation(this));
 		Stoppable stop = state.schedule.scheduleRepeating(p);
 		p.makeStoppable(stop);
+	//	System.out.println(lastMeal + " " + lastMealLow + " " + actualRepRate);
 	}
 	
 	/**
@@ -373,6 +376,9 @@ public class Prey extends Animal implements Steppable{
 	 * Output: None
 	 */
 	public boolean iDie(SimState state){
+		
+		if(lastMeal <= lastMealLow) //can only die if they are hungry
+			return false;
 		//older = more likely to die
 	 	//if(age>oldAge)
 	 		//actualDeathRate = actualDeathRate * agingDeathMod;
@@ -412,7 +418,7 @@ public class Prey extends Animal implements Steppable{
 		if(repo <= actualRepRate && age >=repAge && lastMeal <= lastMealLow){
 			this.reproduce(state);
 			return true;
-			}
+		}
 		return false;
 	}
 	/**

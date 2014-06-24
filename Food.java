@@ -12,7 +12,7 @@ public class Food implements Steppable {
 	protected double amount = 1; //amount of food a single agent represents
 //	private double diseasePr = .005;
 //	private int diseaseRandNum = 10000;
-	private double repPr = .0005;
+	private double repPr = .05;
 	private final static int repRandNum = 10000;
 //	private boolean diseased = false;
 	private final static double regrowthRate = .25;
@@ -33,7 +33,7 @@ public class Food implements Steppable {
 		PVP_2 pvp = (PVP_2)state;
 		
 		grid = pvp.world;
-		
+		assert amount > 0 : "Food's amount is not > 0: " + amount;
 		//Slowly grows back
 		amount += regrowthRate;
 		if(amount > 1)
@@ -153,17 +153,21 @@ public class Food implements Steppable {
 	
 	/**
 	 * Used for when a prey will eat the food, allows the amount to be gradient.
-	 * @param decrease the amount by which the food's amount decreases during an eat event
+	 * @param decrease the amount by which the food's amount decreases during an eat event. 0 <= d <=1
 	 */
 	public void eat(double decrease)
 	{
+		assert decrease >=0 && decrease <=1;
+		assert amount > 0 : "Food's amount was not > 0 when eat was called";
 		amount = amount - decrease; //was .7, and method wasn't used then
-		if(amount <=0){
+		//System.out.println(amount);
+		if(amount <=0.001){
 			//amount = 0.0;
 			//may be a point where it is being removed, but not stopped.
 			this.stop.stop();
 			grid.remove(this);
 			numFood--;
+		//	System.out.println("removed " + numFood);
 		}
 	}
 }// end of class

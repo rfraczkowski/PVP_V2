@@ -179,7 +179,7 @@ public abstract class Animal implements Steppable {
 		// Biased Random Movement
 		Int2D cord = grid.getObjectLocation(this);
 		//assert ---Cord != null);
-		if(cord != null){
+		assert cord !=null; //there is no valid reason this could be null //if(cord != null){
 		int xCord = cord.getX();
 		int yCord = cord.getY();
 		
@@ -198,65 +198,50 @@ public abstract class Animal implements Steppable {
 		if (choice < actualProb[0]){
 			grid.setObjectLocation(this, grid.tx(xCord - velocity), grid.ty(yCord - velocity));
 			this.direction = NORTH;
-			if(facing != direction)
-				directChangeTotal++;
 		}
 		//Moving forward only
 		else if (choice < (actualProb[0] + actualProb[1])){
 			grid.setObjectLocation(this, grid.tx(xCord), grid.ty(yCord - velocity));
 			this.direction = NORTH;
-			if(facing != direction)
-				directChangeTotal++;
 		}
 		//Moving up and right
 		else if (choice < (actualProb[0] + actualProb[1] + actualProb[2])){
 			grid.setObjectLocation(this, grid.tx(xCord + velocity), grid.ty(yCord - velocity));
 			this.direction = NORTH;
-			if(facing != direction)
-				directChangeTotal++;
 		}
 		//Moving left
 		else if (choice < (actualProb[0] + actualProb[1] + actualProb[2] + actualProb[3])){
 			grid.setObjectLocation(this, grid.tx(xCord - velocity), grid.ty(yCord));
 			this.direction = WEST;
-			if(facing != direction)
-				directChangeTotal++;
 		}
 		//Staying put
 		else if (choice < (actualProb[0] + actualProb[1] + actualProb[2] + actualProb[3] + actualProb[4])){
-			grid.setObjectLocation(this, grid.tx(xCord), grid.ty(yCord));
+			//unnecessary as there is nothing changing: grid.setObjectLocation(this, grid.tx(xCord), grid.ty(yCord));
 			this.direction = EAST;
-			if(facing != direction)
-				directChangeTotal++;
 		}
 		//Moving right
 		else if (choice < (actualProb[0] + actualProb[1] + actualProb[2] + actualProb[3] + actualProb[4]+ actualProb[5])){
 			grid.setObjectLocation(this, grid.tx(xCord+velocity), grid.ty(yCord));
 			this.direction = SOUTH;
-			if(facing != direction)
-				directChangeTotal++;
 		}
 		//Moving down left
 		else if (choice < (actualProb[0] + actualProb[1] + actualProb[2] + actualProb[3] + actualProb[4]+ actualProb[5] + actualProb[6])){
 			grid.setObjectLocation(this, grid.tx(xCord - velocity), grid.ty(yCord + velocity));
 			this.direction = SOUTH;
-			if(facing != direction)
-				directChangeTotal++;
 		}
 		//Moving down only
 		else if (choice < (actualProb[0] + actualProb[1] + actualProb[2] + actualProb[3] + actualProb[4] + actualProb[5] + actualProb[6] + actualProb[7])){
 			grid.setObjectLocation(this, grid.tx(xCord), grid.ty(yCord +velocity));
 			this.direction = SOUTH;
-			if(facing != direction)
-				directChangeTotal++;
 		}
 		//Moving down right
-		else if (choice < (actualProb[0] + actualProb[1] + actualProb[2] + actualProb[3] + actualProb[4] + actualProb[5] + actualProb[6] + actualProb[7] + actualProb[8])){
+		else //unnecessary: if (choice < (actualProb[0] + actualProb[1] + actualProb[2] + actualProb[3] + actualProb[4] + actualProb[5] + actualProb[6] + actualProb[7] + actualProb[8]))
+		{
 			grid.setObjectLocation(this, grid.tx(xCord + velocity), grid.ty(yCord +velocity));
 			this.direction = SOUTH;
-			if(facing != direction)
-				directChangeTotal++;
 		}
+		if(facing != direction)
+			directChangeTotal++;
 		
 		/*******************This section is with old direction *********************************/
 		//write("Old Location: " + grid.getObjectLocation(this));
@@ -505,18 +490,17 @@ public abstract class Animal implements Steppable {
 		}*/
 		/**********************************End of Old Direction **********************************/
 		
-			if(prevLoc.x == grid.getObjectLocation(this).x && prevLoc.y == grid.getObjectLocation(this).y)
-			{
-				if(this instanceof Prey)
-					preyStay++;
-				else
-					predStay++;
-			}
+		if(prevLoc.x == grid.getObjectLocation(this).x && prevLoc.y == grid.getObjectLocation(this).y)
+		{
+			if(this instanceof Prey)
+				preyStay++;
+			else
+				predStay++;
 		}
 		
 		//write("New Location: " + grid.getObjectLocation(this));
 		
-		}
+}
 	
 	/**
 		*Purpose: Abstract method for eat

@@ -43,9 +43,9 @@ public class StatisticsAgent extends Animal implements Steppable {
 		
 		//write(state.schedule.getTime() + ", " + numPrey + ", " + numPredator);
 		
-		//If either all the prey are dead, or all the predator, then stop the simulation
+		//If all the prey are dead, and all the predator, then stop the simulation
 		// and print the final stats.
-		if(numPrey == 0 || numPredator == 0){
+		if(numPrey == 0 && numPredator == 0){
 		//	write("End of sim,");
 		//	printStats(state); will now get called above, so not needed
 			state.kill();

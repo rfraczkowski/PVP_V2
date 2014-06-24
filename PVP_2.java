@@ -22,7 +22,6 @@ public class PVP_2 extends SimState{
 	//dimensions of the world
 	private static int gridWidth;
 	private static int gridHeight;
-	private static int gridArea = 0;
 	
 	//Population Numbers
 	private static int numPred; //only holds initial value, Animal data member is updated over time
@@ -36,7 +35,7 @@ public class PVP_2 extends SimState{
 	
 	//Number of Clusters
 	private static int clusters; //changed from final so that it could be a parameter
-	private static int [][] clust;
+	private static int [][] clust; //should this be a local variable? Is it just used to determine appropriate locations?
 	
 	//File I/O
 	protected static File dir; //changed to argument = new File("." ); //runs/presentation changed to current directory
@@ -57,7 +56,7 @@ public class PVP_2 extends SimState{
 		gridHeight = gridH;
 		numPrey = prey;
 		numPred = pred;
-		gridArea = (gridWidth*gridHeight);
+		int gridArea = (gridWidth*gridHeight);
 		numFood = (int) (gridArea * FOOD_POP_RATE);
 		//expectationMapDecay = exMap;
 	}
@@ -153,15 +152,15 @@ public class PVP_2 extends SimState{
 			Animal.writer.close(); //close overall file writing stream
 			
 			//output final learning probabilities for every animal agent still alive
-			Bag objs = world.getAllObjects();
-			for( Object x : objs)
-			{
-				if(! (x instanceof Food))
-				{
-					Animal a = (Animal) x;
-					a.printLPSO(this);
-				}
-			}
+//			Bag objs = world.getAllObjects();
+//			for( Object x : objs)
+//			{
+//				if(! (x instanceof Food))
+//				{
+//					Animal a = (Animal) x;
+//					a.printLPSO(this);
+//				}
+//			}
 		}
 		catch(IOException e)
 		{
