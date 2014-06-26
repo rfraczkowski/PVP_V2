@@ -90,7 +90,7 @@ public class Prey extends Animal implements Steppable{
 		
 //		oldAge = 10;
 		if(learn)
-			learnedProb = parentLearn;
+			copyLearnedProb(parentLearn);
 		ID = "R" + IDCounter;
 		IDCounter++; //increase for next prey
 		actualDeathRate = defaultDeathRate; //initialize to parameter value
@@ -461,6 +461,14 @@ public class Prey extends Animal implements Steppable{
 	{
 		learn = i;
 	//	System.out.println(learn);//testing
+	}
+	/**
+	 * Set hungerdeathmod
+	 * @param i new value
+	 */
+	public static void setHungerMod(double i)
+	{
+		hungerDeathMod = i;
 	}
 }
 

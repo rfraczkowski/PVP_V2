@@ -35,6 +35,8 @@ public abstract class Animal implements Steppable {
 			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11},
 			{11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11, 11.11}
 	};
+	protected final static short LPWIDTH = 9; //width of the learnedProb array
+	protected final static short LPHEIGHT = 9; //height of the learnedProb array
 	//protected double[] learnedMov = actualProb;
 	//Arrays for remembering policy - commented out as unused
 //	protected double[] upLeft = {};
@@ -80,6 +82,23 @@ public abstract class Animal implements Steppable {
 //	protected double emotions = 0.0;
 //	protected double eRate = .1;
 	
+	/**
+	 * Copies over one learnedProb array into the current one
+	 * @param array the array whose values will replace thos in learnedProb. Must be same size
+	 */
+	protected void copyLearnedProb(double[][] array)
+	{
+		assert array.length == LPHEIGHT;
+		
+		for(int i=0; i<LPHEIGHT; i++)
+		{
+			assert array[i].length == LPWIDTH;
+			for(int j=0; j<LPWIDTH; j++)
+			{
+				learnedProb[i][j] = array[i][j];
+			}
+		}
+	}
 	/**
 		*Purpose: Initializes the Animal Class
 		*Input:Number of predator, number or prey, and the directory to keep output information

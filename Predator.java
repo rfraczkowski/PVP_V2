@@ -90,7 +90,8 @@ public class Predator extends Animal implements Steppable{
 		direction = state.random.nextInt(3);
 		
 //		oldAge = 20;
-		learnedProb = parentLearn;
+		if(learn)
+			copyLearnedProb(parentLearn);
 
 		ID = "F" + IDCounter;
 		IDCounter++;
@@ -435,5 +436,13 @@ public class Predator extends Animal implements Steppable{
 	public static void setLearn(boolean i)
 	{
 		learn = i;
+	}
+	/**
+	 * Set hungerdeathmod
+	 * @param i new value
+	 */
+	public static void setHungerMod(double i)
+	{
+		hungerDeathMod = i;
 	}
 }

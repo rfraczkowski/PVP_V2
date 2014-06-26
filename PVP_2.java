@@ -332,6 +332,10 @@ public class PVP_2 extends SimState{
 		Predator.setRepRate(predRepRate);
 		Predator.setLearn(predLearn);
 		
+		double hungerPreyMod = Double.parseDouble(args[++p]);
+		double hungerPredMod = Double.parseDouble(args[++p]);
+		Prey.setHungerMod(hungerPreyMod);
+		Predator.setHungerMod(hungerPredMod);
 //		Prey.initializePrey(preyMaxHunger, preyOldAge, preyDeathRate, preyDeathRandNum, preyAgingDeathMod,
 //				preyHungerDeathMod, preyLastMealLow, preyLastMealMed, preyLastMealHigh, preyRepAge,
 //				preyDefaultRepRate, preyRepRandNum);
