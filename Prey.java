@@ -39,6 +39,8 @@ public class Prey extends Animal implements Steppable{
 	protected static int deathCollectPrey = 0;
 	protected static int predOutran = 0; //increased in a step if there are fewer predators in sight than last time
 	protected int predSeen = 0; //how many predators were seen in prior timestep, to determine if any were outrun 
+	protected static int eatCount=0; //how often prey eat
+	protected static int hunger=0; //total hunger level
 
 //	protected int eatingChance;
 //	private Bag seen;
@@ -275,11 +277,8 @@ public class Prey extends Animal implements Steppable{
 	 }
 	 
 	 //Reproduction Chance
-	 if(this.iReproduce(state)){
-		 	//this.updateEmotions();
-		   //this.printStats();
-		 return;
-	 }
+	 this.iReproduce(state);
+	 hunger += lastMeal; //add to sum of predator hunger for this interval
 	 /*
 	 //See & process
 	 else 
@@ -349,6 +348,7 @@ public class Prey extends Animal implements Steppable{
 //			}
 		food.eat(foodReduction);
 		lastMeal = 0;
+		eatCount++;
 //		System.out.println("ate");
 		//write("Food is removed");
 		

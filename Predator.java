@@ -39,6 +39,7 @@ public class Predator extends Animal implements Steppable{
 	protected static int deathCollectPredator = 0;
 	protected static int reproductionCollectPredator = 0;
 	protected static int preyCaught = 0;
+	protected static int hunger=0; //total hunger level
 	
 	//private Bag seen;
 	//protected double diseaseRecovery = .25;
@@ -234,10 +235,10 @@ public class Predator extends Animal implements Steppable{
 		
 		//Reproduction Calculations -- sees if predator will reproduce this timestep,
 		//reproduces the predator if so
-		if(this.iReproduce(state))
-		{
-			return;
-		}
+		this.iReproduce(state);
+
+		hunger += lastMeal; //add to sum of predator hunger for this interval
+
 		
 
 	}

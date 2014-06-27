@@ -101,7 +101,10 @@ public class StatisticsAgent extends Animal implements Steppable {
 		write(finalRepRatePredator + ",");
 		write(preyCaughtRate + ",");
 		write(preyStay + ",");
-		write(predStay + "\n");
+		write(predStay + ",");
+		write(Prey.eatCount + ",");
+		write(Prey.hunger + ",");
+		write(Predator.hunger + "\n");
 		//write(".1" + ",");
 		//write(((PVP_2) state).getClusters()+"\n");
 		
@@ -121,6 +124,9 @@ public class StatisticsAgent extends Animal implements Steppable {
 		Predator.preyCaught = 0;
 		preyStay = 0;
 		predStay = 0;
+		Prey.eatCount=0;
+		Prey.hunger=0;
+		Predator.hunger=0;
 			
 	}
 	@Override
